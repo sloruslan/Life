@@ -94,10 +94,10 @@ namespace Life
                         g.FillRectangle(Brushes.Green, x * size, y * size, size, size);
                     }
                 }
-                field = newFiled;
-                pictureBox1.Refresh();
-                timer1.Stop();
+ 
             }
+            field = newFiled;
+            pictureBox1.Refresh();
 
         }
 
@@ -111,7 +111,7 @@ namespace Life
                     var col = x + i;
                     var row = y + j;
                     
-                    if ((col < 0) || (row<0) || (col >=cols) || (row >= rows) || ((col == x) && (row == y)))
+                    if ((col < 0) || (row < 0) || (col >= cols) || (row >= rows) || ((col == x) && (row == y)))
                     {
                         continue;
                     }
