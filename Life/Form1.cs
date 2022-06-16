@@ -1,3 +1,4 @@
+using Life.Domain;
 using System.Drawing;
 
 namespace Life
@@ -6,7 +7,7 @@ namespace Life
     {
         private Graphics g;
         private int size;
-        private bool[,] field;
+        private Cell[,] field;
         private int rows;
         private int cols;
 
@@ -21,25 +22,7 @@ namespace Life
             {
                 return;
             }
-
-            size = (int)sizeUpDown.Value;
-
-            rows = pictureBox1.Height / size;
-            cols = pictureBox1.Width / size;
-            field = new bool[cols, rows];
-
-            Random random = new Random();
-            for (int i = 0; i < cols; i++)
-            {
-                for (int j = 0; j < rows; j++)
-                {
-                    field[i, j] = random.Next((int)numDensity.Value) == 0;
-                }
-            }
-
-            pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            g = Graphics.FromImage(pictureBox1.Image);
-
+            
             timer1.Start();
         }
 
@@ -56,52 +39,47 @@ namespace Life
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            NextGeneration();
+            field = NextGeneration(field);
+            Risov(field);
+            
         }
 
-        private void NextGeneration()
+        private Cell[,] NextGeneration(Cell[,] current)
         {
-            g.Clear(Color.Black);
-
-            var newFiled = new bool[cols, rows];
+            var newFiled = new Cell[cols, rows];
 
             for (int x = 0; x < cols; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    var countSosedi = SosediCount(x,y);
-                    var isLife = field[x, y];
+                    var countSosedi = SosediCount(current, x, y);
+                    var currentCell = current[x, y];
+                    var isLife = currentCell.IsLife;
                     
                     if (isLife)
                     {
                         if ((countSosedi == 2) | (countSosedi == 3))
                         {
-                            newFiled[x, y] = true;
+                            newFiled[x, y] = currentCell;
                         }
-                        else newFiled[x, y] = false;
+                        else newFiled[x, y] = new Cell();
                     }
                     else
                     {
                         if (countSosedi == 3)
                         {
-                            newFiled[x, y] = true;
+                            newFiled[x, y] = new Cell() { IsLife = true };
                         }
-                        else newFiled[x, y] = false;
+                        else newFiled[x, y] = currentCell;
                     }   
                     
-                    if (isLife)
-                    {
-                        g.FillRectangle(Brushes.Green, x * size, y * size, size, size);
-                    }
                 }
  
             }
-            field = newFiled;
-            pictureBox1.Refresh();
-
+            return newFiled;
         }
 
-        private int SosediCount(int x, int y)
+        private int SosediCount(Cell[,] cells, int x, int y)
         {
             var res = 0;
             for (int i = -1; i < 2; i++)
@@ -116,7 +94,7 @@ namespace Life
                         continue;
                     }
 
-                    if (field[col, row]) res++;
+                    if (cells[col, row].IsLife) res++;
                 }
             }
             return res;
@@ -124,6 +102,50 @@ namespace Life
         private void button2_Click(object sender, EventArgs e)
         {
             StopGame();
+        }
+
+        private void genFirstFieldBT_Click(object sender, EventArgs e)
+        {
+            field = StartGeneration();
+            Risov(field);
+        }
+
+        private Cell[,] StartGeneration()
+        {
+            size = (int)sizeUpDown.Value;
+
+            rows = pictureBox1.Height / size;
+            cols = pictureBox1.Width / size;
+
+            Cell[,] res = new Cell[cols, rows];
+
+            Random random = new Random();
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    res[x, y] = new Cell() { IsLife = (random.Next((int)numDensity.Value) == 0) };
+                }
+            }
+
+            return res;
+
+        }
+
+        private void Risov(Cell[,] cells)
+        {
+            pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            g = Graphics.FromImage(pictureBox1.Image);
+
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    g.FillRectangle(cells[x, y].Color, x * size, y * size, size, size);
+                }
+            }
+            pictureBox1.Refresh();
+
         }
     }
 }
