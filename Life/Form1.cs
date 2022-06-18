@@ -1,3 +1,4 @@
+using Life.Core.Managers;
 using Life.Domain;
 using System.Drawing;
 
@@ -10,6 +11,7 @@ namespace Life
         private Cell[,] field;
         private int rows;
         private int cols;
+        private int plot;
 
         public Form1()
         {
@@ -39,12 +41,12 @@ namespace Life
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            field = NextGeneration(field);
+            field = CalcGeneration.NextGeneration(field, rows, cols);
             Risov(field);
             
         }
 
-        private Cell[,] NextGeneration(Cell[,] current)
+        /*private Cell[,] NextGeneration(Cell[,] current)
         {
             var newFiled = new Cell[cols, rows];
 
@@ -77,9 +79,9 @@ namespace Life
  
             }
             return newFiled;
-        }
+        }*/
 
-        private int SosediCount(Cell[,] cells, int x, int y)
+        /*private int SosediCount(Cell[,] cells, int x, int y)
         {
             var res = 0;
             for (int i = -1; i < 2; i++)
@@ -98,7 +100,7 @@ namespace Life
                 }
             }
             return res;
-        }
+        }*/
         private void button2_Click(object sender, EventArgs e)
         {
             StopGame();
@@ -106,11 +108,18 @@ namespace Life
 
         private void genFirstFieldBT_Click(object sender, EventArgs e)
         {
-            field = StartGeneration();
+            size = (int)sizeUpDown.Value;
+
+            rows = pictureBox1.Height / size;
+            cols = pictureBox1.Width / size;
+
+            plot = (int)numDensity.Value;
+
+            field = CalcGeneration.StartGeneration(size, rows, cols, plot);
             Risov(field);
         }
 
-        private Cell[,] StartGeneration()
+        /*private Cell[,] StartGeneration()
         {
             size = (int)sizeUpDown.Value;
 
@@ -130,7 +139,7 @@ namespace Life
 
             return res;
 
-        }
+        }*/
 
         private void Risov(Cell[,] cells)
         {

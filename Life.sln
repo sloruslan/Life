@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life", "Life\Life.csproj", "{8D5E3226-9D38-49C3-861A-F0EF702B2C88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life", "Life\Life.csproj", "{8D5E3226-9D38-49C3-861A-F0EF702B2C88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life.Core", "Life.Core\Life.Core.csproj", "{AFBB557B-C714-4545-ACFB-82D34DAEB6A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8D5E3226-9D38-49C3-861A-F0EF702B2C88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D5E3226-9D38-49C3-861A-F0EF702B2C88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D5E3226-9D38-49C3-861A-F0EF702B2C88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFBB557B-C714-4545-ACFB-82D34DAEB6A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFBB557B-C714-4545-ACFB-82D34DAEB6A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFBB557B-C714-4545-ACFB-82D34DAEB6A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFBB557B-C714-4545-ACFB-82D34DAEB6A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
