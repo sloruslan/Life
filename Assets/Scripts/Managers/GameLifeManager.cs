@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-
 [RequireComponent(typeof(GenerateTextureManager))]
 public class GameLifeManager : MonoBehaviour
 {
@@ -51,13 +50,22 @@ public class GameLifeManager : MonoBehaviour
         BoolsArray
     }
 
+    public enum ETypeOfRender
+    {
+        Array,
+        Stream
+    }
+
     public ETypeOfArray type;
+    public ETypeOfRender typeRender;
 
     private void StartGame()
     {
         _gameLife = new GameLife(CellsPerHorizontal, PixelsPerVercital, StartChanceOfLifeForCell);
         _gameLifeB = new GameLifeBoolsArray(CellsPerHorizontal, PixelsPerVercital, StartChanceOfLifeForCell);
         _fieldBoolsArray = new bool[CellsPerHorizontal, PixelsPerVercital];
+
+        
 
         _field = new CellsBase(CellsPerHorizontal, PixelsPerVercital);
 
@@ -106,7 +114,10 @@ public class GameLifeManager : MonoBehaviour
                   for (int y = 0; y < CellsPerVertical; y++)
                       _texture.SetCellColor(x, y, _field[x, y] ? 1 : 0);
             */
-            _texture.SetTextureColorApply(_field);  
+            if (typeRender == ETypeOfRender.Stream)
+                _texture.SetTextureColorStreamApply(_field);  
+            else
+                _texture.SetTextureColorApply(_field);
         }
         else
         {

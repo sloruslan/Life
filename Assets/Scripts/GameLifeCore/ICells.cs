@@ -1,28 +1,29 @@
-public class CellsBase
+public struct CellsBase
 {
-    public virtual CellBase[,] Array { get; set; }
+    //public CellBase[,] Array;
+    public byte[,] Array;
     
-    public virtual bool this[int x, int y]
+    public byte this[int x, int y]
     {
-        get => Array[x, y].IsLife;
-        set => Array[x, y].IsLife = value;
+        get => Array[x, y];
+        set
+        {
+            Array[x, y] = value;
+
+            ArrayColor[x * 3 + y * Width * 3 + 1] = (byte)(value == 1 ? 255 : 0);
+        }
     }
 
-    public virtual int Width { get; set; }
-    public virtual int Height { get; set; }
+    private int Width;
+    private int Height;
+
+    public byte[] ArrayColor;
+
     public CellsBase(int width, int height)
     {
         Width = width;
         Height = height;
-        Array = new CellBase[width, height];
-
-        for (int i = 0; i < width; i++)
-            for (int j = 0; j < height; j++)
-                Array[i, j] = new CellBase();
-    }
-
-    public static CellsBase GetEmptyFromParams(CellsBase cellsBase)
-    {
-        return new CellsBase(cellsBase.Width, cellsBase.Height);
+        Array = new byte[width, height];
+        ArrayColor = new byte[width * height * 3];
     }
 }

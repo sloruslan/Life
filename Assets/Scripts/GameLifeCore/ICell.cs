@@ -1,6 +1,6 @@
-public class CellBase
-{
-    public bool IsLife { get; set; }
 
-    public CellBase() { }
+public struct CellBase
+{
+    public byte State;
 }
+

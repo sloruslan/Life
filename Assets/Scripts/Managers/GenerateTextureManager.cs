@@ -77,12 +77,13 @@ public class GenerateTextureManager : MonoBehaviour
     {
         for (int x = 0; x < _widthTextureByPixels; x += _cellSizeByPixel)
             for (int y = 0; y < _heightTextureByPixels; y += _cellSizeByPixel)
-                _texture2D.SetPixels(x, y, _cellSizeByPixel, _cellSizeByPixel, _colorsManager[field[x, y] ? 1 : 0]);
+                _texture2D.SetPixels(x, y, _cellSizeByPixel, _cellSizeByPixel, _colorsManager[field[x, y]]);
         _texture2D.Apply();
     }
 
-    public void SetTextureColorApply()
+    public void SetTextureColorStreamApply(CellsBase cells)
     {
-        
+        _texture2D.SetPixelData(cells.ArrayColor, 0);
+        _texture2D.Apply();
     }
 }

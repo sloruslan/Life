@@ -362,11 +362,12 @@ MonoBehaviour:
   TimeOfTick: 1
   CellsPerHorizontal: -1
   CellsPerVertical: -1
-  PixelsPerHorizontal: 0
-  PixelsPerVercital: 0
+  PixelsPerHorizontal: 4
+  PixelsPerVercital: 4
   PixelsPerCell: 1
   StartChanceOfLifeForCell: 50
-  type: 1
+  type: 0
+  typeRender: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
