@@ -1,92 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class GameLifeBoolsArray
-{
-    private int _cellsPerHorizontal, _cellsPerVertical;
-    
-    private int _startChanceOfLifeForCell;
-
-    public GameLifeBoolsArray(int cellsByHorizontal, int ñellsByVertical, int startChanceOfLifeForCell = 50)
-    {
-        _cellsPerHorizontal = cellsByHorizontal;
-        _cellsPerVertical = ñellsByVertical;
-        _startChanceOfLifeForCell = startChanceOfLifeForCell;
-
-        
-    }
-    public bool[,] FirstGeneration(bool[,] inputCells)
-    {
-        for (int i = 0; i < _cellsPerHorizontal; i++)
-        {
-            for (int j = 0; j < _cellsPerVertical; j++)
-            {
-                inputCells[i, j] = Random.Range(0, 101) < _startChanceOfLifeForCell;
-            }
-        }
-
-        return inputCells;
-    }
-
-    public bool[,] NextGeneration(bool[,] inputCells)
-    {
-        var newField = new bool[_cellsPerHorizontal, _cellsPerVertical];
-
-        for (int x = 0; x < _cellsPerHorizontal; x++)
-        {
-            for (int y = 0; y < _cellsPerVertical; y++)
-            {
-                var countSosedi = SosediCount(x, y, inputCells);
-
-                if (inputCells[x, y])
-                {
-                    if ((countSosedi == 2) | (countSosedi == 3))
-                        newField[x, y] = true;
-                    else
-                        newField[x, y] = false;
-                }
-                else
-                {
-                    if (countSosedi == 3)
-                        newField[x, y] = true;
-                    else
-                        newField[x, y] = false;
-                }
-            }
-        }
-
-        return newField;
-    }
-
-    private int SosediCount(int x, int y, bool[,] inputCells)
-    {
-        var res = 0;
-        for (int i = -1; i < 2; i++)
-        {
-            for (int j = -1; j < 2; j++)
-            {
-                var col = x + i;
-                var row = y + j;
-
-                if ((col < 0) || (row < 0) || (col >= _cellsPerHorizontal) || (row >= _cellsPerVertical) || ((col == x) && (row == y)))
-                {
-                    continue;
-                }
-
-                if (inputCells[col, row]) res++;
-            }
-        }
-        return res;
-    }
-}
-
-
 public class GameLife
 {
     private int _cellsPerHorizontal, _cellsPerVertical;
     private int _startChanceOfLifeForCell;
-    private int _xmax, _ymax;
+    private int _xmax, _xmax100, _xmax001;
+    private int _ymax, _ymax100, _ymax001;
     public GameLife(int cellsByHorizontal, int ñellsByVertical, int startChanceOfLifeForCell = 50)
     {
         _cellsPerHorizontal = cellsByHorizontal;
@@ -94,6 +14,10 @@ public class GameLife
         _startChanceOfLifeForCell = startChanceOfLifeForCell;
         _xmax = _cellsPerHorizontal - 1;
         _ymax = _cellsPerVertical - 1;
+        _xmax100 = _xmax - 1;
+        _xmax001 = _xmax + 1;
+        _ymax100 = _ymax - 1;
+        _ymax001 = _ymax + 1;
     }
     public CellsBase FirstGeneration(CellsBase inputCells)
     {
@@ -101,7 +25,7 @@ public class GameLife
         {
             for (int j = 0; j < _cellsPerVertical; j++)
             {
-                inputCells[i, j] = (byte)((Random.Range(0, 101) < _startChanceOfLifeForCell) ? 1 : 0);
+                inputCells[i, j] = (byte)((Random.Range(0, 101) <= _startChanceOfLifeForCell) ? 1 : 0);
             }
         }
 
@@ -112,34 +36,35 @@ public class GameLife
     {
         var newField = new CellsBase(_cellsPerHorizontal, _cellsPerVertical);
 
-        RecalcNewField(0, 0, ref inputCells, ref newField, SosediCornerCount(ref inputCells, ESide.TL));
-        RecalcNewField(_xmax, 0, ref inputCells, ref newField, SosediCornerCount(ref inputCells, ESide.TR));
-        RecalcNewField(_xmax, _ymax, ref inputCells, ref newField, SosediCornerCount(ref inputCells, ESide.BR));
-        RecalcNewField(0, _ymax, ref inputCells, ref newField, SosediCornerCount(ref inputCells, ESide.BL));
+        RecalcNewField(0, 0, inputCells, newField, SosediCornerCount(inputCells, ESide.TL));
+        RecalcNewField(_xmax, 0, inputCells, newField, SosediCornerCount(inputCells, ESide.TR));
+        RecalcNewField(_xmax, _ymax, inputCells, newField, SosediCornerCount(inputCells, ESide.BR));
+        RecalcNewField(0, _ymax, inputCells, newField, SosediCornerCount(inputCells, ESide.BL));
 
         for (int x = 1; x < _cellsPerHorizontal - 1; x++)
         {
-            RecalcNewField(x, 0, ref inputCells, ref newField, SosediCount(x, ref inputCells, ESide.Top));
-            RecalcNewField(x, _ymax, ref inputCells, ref newField, SosediCount(x, ref inputCells, ESide.Bottom));
+            RecalcNewField(x, 0, inputCells, newField, SosediCount(x, inputCells, ESide.Top));
+            RecalcNewField(x, _ymax, inputCells, newField, SosediCount(x, inputCells, ESide.Bottom));
         }
         for (int y = 1; y < _cellsPerVertical - 1; y++)
         {
-            RecalcNewField(0, y, ref inputCells, ref newField, SosediCount(y, ref inputCells, ESide.Left));
-            RecalcNewField(_xmax, y, ref inputCells, ref newField, SosediCount(y, ref inputCells, ESide.Right));
+            RecalcNewField(0, y, inputCells, newField, SosediCount(y, inputCells, ESide.Left));
+            RecalcNewField(_xmax, y, inputCells, newField, SosediCount(y, inputCells, ESide.Right));
         }
         
         for (int x = 1; x < _cellsPerHorizontal - 1; x++)
         {
             for (int y = 1; y < _cellsPerVertical - 1; y++)
             {
-                RecalcNewField(x, y, ref inputCells, ref newField, SosediCount(x, y, ref inputCells));
+                RecalcNewField(x, y, inputCells, newField, SosediCount(x, y, inputCells));
             }
         }
 
         return newField;
     }
 
-    private void RecalcNewField(int x, int y, ref CellsBase inputCells, ref CellsBase newField, int countSosedi)
+    
+    private void RecalcNewField(int x, int y, CellsBase inputCells, CellsBase newField, int countSosedi)
     {
         if (inputCells[x, y] != 0)
         {
@@ -156,8 +81,18 @@ public class GameLife
                 newField[x, y] = 0;
         }
     }
+    
+    
+    private void RecalcNewFieldNew(int x, int y, CellsBase inputCells, CellsBase newField, int countSosedi)
+    {
+        if ((countSosedi == 3) || (inputCells[x, y] == 1 && countSosedi == 2))
+            newField[x, y] = 1;
+        else
+            newField[x, y] = 0;
+    }
+    
 
-    private int SosediCount(int x, int y, ref CellsBase inputCells)
+    private int SosediCount(int x, int y, CellsBase inputCells)
     {
         var x100 = x - 1;
         var x010 = x;
@@ -171,7 +106,7 @@ public class GameLife
 
 
 
-    private int SosediCount(int index, ref CellsBase inputCells, ESide side)
+    private int SosediCount(int index, CellsBase inputCells, ESide side)
     {
         var res = 0;
 
@@ -182,38 +117,42 @@ public class GameLife
         switch (side)
         {
             case ESide.Top:
-                res = inputCells[p001, 0] + inputCells[p001, 1] + inputCells[p010, 1] + inputCells[p100, 1] + inputCells[p100, 0];
+                res = inputCells[p001, 0] + inputCells[p001, 1] + inputCells[p010, 1] + inputCells[p100, 1] + inputCells[p100, 0] + inputCells[p001, _ymax] + inputCells[p010, _ymax] + inputCells[p100, _ymax];
                 break;
             case ESide.Right:
-                res = inputCells[_xmax, p001] + inputCells[_xmax - 1,p001] + inputCells[_xmax-1, p010] + inputCells[_xmax-1, p100] + inputCells[_xmax, p100];
+                res = inputCells[_xmax, p001] + inputCells[_xmax - 1,p001] + inputCells[_xmax-1, p010] + inputCells[_xmax-1, p100] + inputCells[_xmax, p100] + inputCells[0, p100] + inputCells[0, p010] + inputCells[0, p001];
                 break;
             case ESide.Bottom:
-                res = inputCells[p001, _ymax] + inputCells[p001, _ymax - 1] + inputCells[p010, _ymax - 1] + inputCells[p100, _ymax - 1] + inputCells[p100, 0];
+                res = inputCells[p001, _ymax] + inputCells[p001, _ymax - 1] + inputCells[p010, _ymax - 1] + inputCells[p100, _ymax - 1] + inputCells[p100, _ymax] + inputCells[p100, 0] + inputCells[p010, 0] + inputCells[p001, 0];
                 break;
             case ESide.Left:
-                res = inputCells[0, p001] + inputCells[1, p001] + inputCells[1, p010] + inputCells[1, p100] + inputCells[0, p100];
+                res = inputCells[0, p001] + inputCells[1, p001] + inputCells[1, p010] + inputCells[1, p100] + inputCells[0, p100] + inputCells[_xmax, p100] + inputCells[_xmax, p010] + inputCells[_xmax, p001];
                 break;
         }
 
         return res;
     }
 
-    private int SosediCornerCount(ref CellsBase inputCells, ESide side)
+    private int SosediCornerCount(CellsBase inputCells, ESide side)
     {
         int res = 0;
         switch (side)
         {
             case ESide.TL:
-                res = inputCells[1, 0] + inputCells[1, 1] + inputCells[0, 1];
+                res = inputCells[1, 0] + inputCells[1, 1] + inputCells[0, 1] + 
+                        inputCells[_xmax, 0] + inputCells[_xmax, 1] + inputCells[0, _ymax] + inputCells[1, _ymax] + inputCells[_xmax, _ymax];
                 break;
             case ESide.TR:
-                res = inputCells[_xmax - 1, 0] + inputCells[_xmax - 1, 1] + inputCells[_xmax, 1];
+                res = inputCells[_xmax - 1, 0] + inputCells[_xmax - 1, 1] + inputCells[_xmax, 1] +
+                         inputCells[0, 0] + inputCells[0, 1] + inputCells[_xmax, _ymax] + inputCells[_xmax - 1, _ymax] + inputCells[0, _ymax];
                 break;
             case ESide.BR:
-                res = inputCells[_xmax - 1, _ymax] + inputCells[_xmax - 1, _ymax - 1] + inputCells[_xmax, _ymax - 1];
+                res = inputCells[_xmax - 1, _ymax] + inputCells[_xmax - 1, _ymax - 1] + inputCells[_xmax, _ymax - 1] + 
+                        inputCells[0, _ymax] + inputCells[0, _ymax - 1] + inputCells[_xmax, 0] + inputCells[_xmax - 1, 0] + inputCells[0, 0];
                 break;
             case ESide.BL:
-                res = inputCells[0, _ymax - 1] + inputCells[1, _ymax - 1] + inputCells[1, _ymax];
+                res = inputCells[0, _ymax - 1] + inputCells[1, _ymax - 1] + inputCells[1, _ymax] + 
+                        inputCells[0, 0] + inputCells[1, 0] + inputCells[_xmax, _ymax] + inputCells[_xmax, _ymax - 1] + inputCells[_xmax, 0];
                 break;
         }
         return res;

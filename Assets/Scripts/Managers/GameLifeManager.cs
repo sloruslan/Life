@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
 [RequireComponent(typeof(GenerateTextureManager))]
@@ -19,10 +17,10 @@ public class GameLifeManager : MonoBehaviour
     public int PixelsPerVercital;
     public int PixelsPerCell = 8;
 
+    [Range(0, 100)]
     public int StartChanceOfLifeForCell = 50;
 
     private GameLife _gameLife;
-    private GameLifeBoolsArray _gameLifeB;
 
     public void Awake()
     {
@@ -36,18 +34,11 @@ public class GameLifeManager : MonoBehaviour
         _texture.Init(this);
     }
 
-    private bool[,] _fieldBoolsArray;
     private CellsBase _field;
 
     private void Start()
-    {   
-        StartGame();
-    }
-
-    public enum ETypeOfArray
     {
-        CellsBase,
-        BoolsArray
+        StartGame();
     }
 
     public enum ETypeOfRender
@@ -56,23 +47,14 @@ public class GameLifeManager : MonoBehaviour
         Stream
     }
 
-    public ETypeOfArray type;
     public ETypeOfRender typeRender;
 
     private void StartGame()
     {
         _gameLife = new GameLife(CellsPerHorizontal, PixelsPerVercital, StartChanceOfLifeForCell);
-        _gameLifeB = new GameLifeBoolsArray(CellsPerHorizontal, PixelsPerVercital, StartChanceOfLifeForCell);
-        _fieldBoolsArray = new bool[CellsPerHorizontal, PixelsPerVercital];
-
-        
 
         _field = new CellsBase(CellsPerHorizontal, PixelsPerVercital);
-
-        if (type == ETypeOfArray.BoolsArray)
-            _fieldBoolsArray = _gameLifeB.FirstGeneration(_fieldBoolsArray);
-        else
-            _field = _gameLife.FirstGeneration(_field);
+        _field = _gameLife.FirstGeneration(_field);
 
         TextureRefresh();
 
@@ -88,12 +70,9 @@ public class GameLifeManager : MonoBehaviour
 
         Stopwatch sw = new Stopwatch();
         sw.Start();
-        
-        if (type == ETypeOfArray.BoolsArray)
-            _fieldBoolsArray = _gameLifeB.NextGeneration(_fieldBoolsArray);
-        else
-            _field = _gameLife.NextGeneration(_field);
-        
+
+        _field = _gameLife.NextGeneration(_field);
+
         sw.Stop();
         UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds);
 
@@ -107,27 +86,15 @@ public class GameLifeManager : MonoBehaviour
         Stopwatch sw = new Stopwatch();
         sw.Start();
 
-        if (type == ETypeOfArray.CellsBase)
-        {
-            /*
-              for (int x = 0; x < CellsPerHorizontal; x++)
-                  for (int y = 0; y < CellsPerVertical; y++)
-                      _texture.SetCellColor(x, y, _field[x, y] ? 1 : 0);
-            */
-            if (typeRender == ETypeOfRender.Stream)
-                _texture.SetTextureColorStreamApply(_field);  
-            else
-                _texture.SetTextureColorApply(_field);
-        }
+
+        if (typeRender == ETypeOfRender.Stream)
+            _texture.SetTextureColorStreamApply(_field);
         else
-        {
-            for (int x = 0; x < CellsPerHorizontal; x++)
-                for (int y = 0; y < CellsPerVertical; y++)
-                    _texture.SetCellColor(x, y, _fieldBoolsArray[x, y] ? 1 : 0);
-            _texture.Apply();
-        }
-        
-        
+            _texture.SetTextureColorApply(_field);
+
+        _texture.Apply();
+
+
         sw.Stop();
         UnityEngine.Debug.Log("TextureRefresh:" + sw.ElapsedMilliseconds);
     }

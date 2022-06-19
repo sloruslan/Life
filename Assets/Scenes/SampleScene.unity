@@ -359,7 +359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97577e452f1d60c478a573a698c6500b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TimeOfTick: 1
+  TimeOfTick: 0
   CellsPerHorizontal: -1
   CellsPerVertical: -1
   PixelsPerHorizontal: 4
