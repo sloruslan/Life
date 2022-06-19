@@ -365,8 +365,7 @@ MonoBehaviour:
   PixelsPerHorizontal: 4
   PixelsPerVercital: 4
   PixelsPerCell: 1
-  StartChanceOfLifeForCell: 50
-  type: 0
+  StartChanceOfLifeForCell: 10
   typeRender: 1
 --- !u!1 &519420028
 GameObject:

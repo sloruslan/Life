@@ -5,8 +5,8 @@ public class GameLife
 {
     private int _cellsPerHorizontal, _cellsPerVertical;
     private int _startChanceOfLifeForCell;
-    private int _xmax, _xmax100, _xmax001;
-    private int _ymax, _ymax100, _ymax001;
+    private int _xmax, _xmax1;
+    private int _ymax, _ymax1;
     public GameLife(int cellsByHorizontal, int сellsByVertical, int startChanceOfLifeForCell = 50)
     {
         _cellsPerHorizontal = cellsByHorizontal;
@@ -14,10 +14,8 @@ public class GameLife
         _startChanceOfLifeForCell = startChanceOfLifeForCell;
         _xmax = _cellsPerHorizontal - 1;
         _ymax = _cellsPerVertical - 1;
-        _xmax100 = _xmax - 1;
-        _xmax001 = _xmax + 1;
-        _ymax100 = _ymax - 1;
-        _ymax001 = _ymax + 1;
+        _xmax1 = _xmax - 1;
+        _ymax1 = _ymax - 1;
     }
     public CellsBase FirstGeneration(CellsBase inputCells)
     {
@@ -51,7 +49,7 @@ public class GameLife
             RecalcNewField(0, y, inputCells, newField, SosediCount(y, inputCells, ESide.Left));
             RecalcNewField(_xmax, y, inputCells, newField, SosediCount(y, inputCells, ESide.Right));
         }
-        
+
         for (int x = 1; x < _cellsPerHorizontal - 1; x++)
         {
             for (int y = 1; y < _cellsPerVertical - 1; y++)
@@ -63,7 +61,9 @@ public class GameLife
         return newField;
     }
 
-    
+    /// <summary>
+    /// Выбор судьбы клетки в зависимоси от количества соседей. Аналогично тому, что ниже, просто другая форма записи
+    /// </summary>
     private void RecalcNewField(int x, int y, CellsBase inputCells, CellsBase newField, int countSosedi)
     {
         if (inputCells[x, y] != 0)
@@ -81,8 +81,10 @@ public class GameLife
                 newField[x, y] = 0;
         }
     }
-    
-    
+
+    /// <summary>
+    /// Выбор судьбы клетки в зависимоси от количества соседей. Аналогично тому, что выше, просто другая форма записи
+    /// </summary>
     private void RecalcNewFieldNew(int x, int y, CellsBase inputCells, CellsBase newField, int countSosedi)
     {
         if ((countSosedi == 3) || (inputCells[x, y] == 1 && countSosedi == 2))
@@ -90,7 +92,7 @@ public class GameLife
         else
             newField[x, y] = 0;
     }
-    
+
 
     private int SosediCount(int x, int y, CellsBase inputCells)
     {
@@ -101,7 +103,7 @@ public class GameLife
         var y010 = y;
         var y001 = y + 1;
 
-        return inputCells[x010, y100 ] + inputCells[x001, y100] + inputCells[x001, y010] + inputCells[x001, y001] + inputCells[x010, y001] + inputCells[x100, y001] + inputCells[x100, y010] + inputCells[x100, y100];
+        return inputCells[x010, y100] + inputCells[x001, y100] + inputCells[x001, y010] + inputCells[x001, y001] + inputCells[x010, y001] + inputCells[x100, y001] + inputCells[x100, y010] + inputCells[x100, y100];
     }
 
 
@@ -120,10 +122,10 @@ public class GameLife
                 res = inputCells[p001, 0] + inputCells[p001, 1] + inputCells[p010, 1] + inputCells[p100, 1] + inputCells[p100, 0] + inputCells[p001, _ymax] + inputCells[p010, _ymax] + inputCells[p100, _ymax];
                 break;
             case ESide.Right:
-                res = inputCells[_xmax, p001] + inputCells[_xmax - 1,p001] + inputCells[_xmax-1, p010] + inputCells[_xmax-1, p100] + inputCells[_xmax, p100] + inputCells[0, p100] + inputCells[0, p010] + inputCells[0, p001];
+                res = inputCells[_xmax, p001] + inputCells[_xmax1, p001] + inputCells[_xmax1, p010] + inputCells[_xmax1, p100] + inputCells[_xmax, p100] + inputCells[0, p100] + inputCells[0, p010] + inputCells[0, p001];
                 break;
             case ESide.Bottom:
-                res = inputCells[p001, _ymax] + inputCells[p001, _ymax - 1] + inputCells[p010, _ymax - 1] + inputCells[p100, _ymax - 1] + inputCells[p100, _ymax] + inputCells[p100, 0] + inputCells[p010, 0] + inputCells[p001, 0];
+                res = inputCells[p001, _ymax] + inputCells[p001, _ymax1] + inputCells[p010, _ymax1] + inputCells[p100, _ymax1] + inputCells[p100, _ymax] + inputCells[p100, 0] + inputCells[p010, 0] + inputCells[p001, 0];
                 break;
             case ESide.Left:
                 res = inputCells[0, p001] + inputCells[1, p001] + inputCells[1, p010] + inputCells[1, p100] + inputCells[0, p100] + inputCells[_xmax, p100] + inputCells[_xmax, p010] + inputCells[_xmax, p001];
@@ -139,20 +141,20 @@ public class GameLife
         switch (side)
         {
             case ESide.TL:
-                res = inputCells[1, 0] + inputCells[1, 1] + inputCells[0, 1] + 
+                res = inputCells[1, 0] + inputCells[1, 1] + inputCells[0, 1] +
                         inputCells[_xmax, 0] + inputCells[_xmax, 1] + inputCells[0, _ymax] + inputCells[1, _ymax] + inputCells[_xmax, _ymax];
                 break;
             case ESide.TR:
-                res = inputCells[_xmax - 1, 0] + inputCells[_xmax - 1, 1] + inputCells[_xmax, 1] +
-                         inputCells[0, 0] + inputCells[0, 1] + inputCells[_xmax, _ymax] + inputCells[_xmax - 1, _ymax] + inputCells[0, _ymax];
+                res = inputCells[_xmax1, 0] + inputCells[_xmax1, 1] + inputCells[_xmax, 1] +
+                         inputCells[0, 0] + inputCells[0, 1] + inputCells[_xmax, _ymax] + inputCells[_xmax1, _ymax] + inputCells[0, _ymax];
                 break;
             case ESide.BR:
-                res = inputCells[_xmax - 1, _ymax] + inputCells[_xmax - 1, _ymax - 1] + inputCells[_xmax, _ymax - 1] + 
-                        inputCells[0, _ymax] + inputCells[0, _ymax - 1] + inputCells[_xmax, 0] + inputCells[_xmax - 1, 0] + inputCells[0, 0];
+                res = inputCells[_xmax1, _ymax] + inputCells[_xmax1, _ymax1] + inputCells[_xmax, _ymax1] +
+                        inputCells[0, _ymax] + inputCells[0, _ymax1] + inputCells[_xmax, 0] + inputCells[_xmax1, 0] + inputCells[0, 0];
                 break;
             case ESide.BL:
-                res = inputCells[0, _ymax - 1] + inputCells[1, _ymax - 1] + inputCells[1, _ymax] + 
-                        inputCells[0, 0] + inputCells[1, 0] + inputCells[_xmax, _ymax] + inputCells[_xmax, _ymax - 1] + inputCells[_xmax, 0];
+                res = inputCells[0, _ymax1] + inputCells[1, _ymax1] + inputCells[1, _ymax] +
+                        inputCells[0, 0] + inputCells[1, 0] + inputCells[_xmax, _ymax] + inputCells[_xmax, _ymax1] + inputCells[_xmax, 0];
                 break;
         }
         return res;
