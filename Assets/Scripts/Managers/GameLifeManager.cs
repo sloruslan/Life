@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
 using System.Diagnostics;
+using Unity.Jobs;
 
 [RequireComponent(typeof(GenerateTextureManager))]
+[RequireComponent(typeof(GameLifeJob))]
 public class GameLifeManager : MonoBehaviour
 {
     [Range(0f, 2f)]
@@ -21,6 +23,25 @@ public class GameLifeManager : MonoBehaviour
     public int StartChanceOfLifeForCell = 50;
 
     private GameLife _gameLife;
+    private GameLifeJob _gameLifeJob;
+    private JobHandle _jobHandle;
+
+    public ETypeOfRender typeRender;
+    public ETypeOfCalc typeCalc;
+
+    public enum ETypeOfCalc
+    {
+        Mono,
+        Job
+    }
+
+    public enum ETypeOfRender
+    {
+        Array,
+        Stream
+    }
+
+    
 
     public void Awake()
     {
@@ -32,6 +53,8 @@ public class GameLifeManager : MonoBehaviour
 
         _texture = GetComponent<GenerateTextureManager>();
         _texture.Init(this);
+
+        _gameLifeJob = GetComponent<GameLifeJob>();
     }
 
     private CellsBase _field;
@@ -41,20 +64,19 @@ public class GameLifeManager : MonoBehaviour
         StartGame();
     }
 
-    public enum ETypeOfRender
-    {
-        Array,
-        Stream
-    }
-
-    public ETypeOfRender typeRender;
+    
 
     private void StartGame()
     {
         _gameLife = new GameLife(CellsPerHorizontal, PixelsPerVercital, StartChanceOfLifeForCell);
+        _gameLifeJob.Init(CellsPerHorizontal, PixelsPerVercital, StartChanceOfLifeForCell);
 
         _field = new CellsBase(CellsPerHorizontal, PixelsPerVercital);
-        _field = _gameLife.FirstGeneration(_field);
+
+        if (typeCalc == ETypeOfCalc.Mono)
+            _field = _gameLife.FirstGeneration(_field);
+        else
+            _field = _gameLifeJob.FirstGeneration(_field);
 
         TextureRefresh();
 
@@ -71,14 +93,18 @@ public class GameLifeManager : MonoBehaviour
         Stopwatch sw = new Stopwatch();
         sw.Start();
 
-        _field = _gameLife.NextGeneration(_field);
-
+        if (typeCalc == ETypeOfCalc.Mono)
+        {
+            _field = _gameLife.NextGeneration(_field);
+            TextureRefresh();
+            StartCoroutine(TickRate());
+        }
+        else
+        {
+            _ = _gameLifeJob.NextGeneration(_field);
+        }
         sw.Stop();
-        UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds);
-
-        TextureRefresh();
-
-        StartCoroutine(TickRate());
+        UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds); 
     }
 
     private void TextureRefresh()
@@ -92,7 +118,7 @@ public class GameLifeManager : MonoBehaviour
         else
             _texture.SetTextureColorApply(_field);
 
-        _texture.Apply();
+        //_texture.Apply();
 
 
         sw.Stop();

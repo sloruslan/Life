@@ -15,20 +15,22 @@ public class GenerateTextureManager : MonoBehaviour
     private Image _image;
     private Sprite _sprite;
 
-    private int _widthTextureByPixels, _heightTextureByPixels, _cellSizeByPixel;   
+    private int _widthTexturePerPixels, _heightTexturePerPixels, _cellSizePerPixel;
+    private int _cellsPerHorizontal;
 
     public void Init(GameLifeManager gameLifeManager)
     {
-        _cellSizeByPixel = gameLifeManager.PixelsPerCell;
-        _widthTextureByPixels = gameLifeManager.PixelsPerHorizontal;
-        _heightTextureByPixels = gameLifeManager.PixelsPerVercital;
+        _cellSizePerPixel = gameLifeManager.PixelsPerCell;
+        _widthTexturePerPixels = gameLifeManager.PixelsPerHorizontal;
+        _heightTexturePerPixels = gameLifeManager.PixelsPerVercital;
+        _cellsPerHorizontal = gameLifeManager.CellsPerHorizontal;
 
         _colorsManager = GetComponent<ColorsManager>();
-        _colorsManager.Init(_cellSizeByPixel);
+        _colorsManager.Init(_cellSizePerPixel);
 
-        _texture2D = new Texture2D(_widthTextureByPixels, _heightTextureByPixels, TextureFormat.RGB24, false);
+        _texture2D = new Texture2D(_widthTexturePerPixels, _heightTexturePerPixels, TextureFormat.RGB24, false);
         
-        _sprite = Sprite.Create(_texture2D, new Rect(0f, 0f, _widthTextureByPixels, _heightTextureByPixels), new Vector2(0.5f, 0.5f));
+        _sprite = Sprite.Create(_texture2D, new Rect(0f, 0f, _widthTexturePerPixels, _heightTexturePerPixels), new Vector2(0.5f, 0.5f));
         _sprite.name = "mySprite";
 
         if ((_spriteRenderer = GetComponent<SpriteRenderer>()) != null)
@@ -44,9 +46,9 @@ public class GenerateTextureManager : MonoBehaviour
 
     public void SetTextureColor(int indexOfColorsArray)
     {
-        for (int x = 0; x < _widthTextureByPixels; x+= _cellSizeByPixel)
-            for (int y = 0; y < _heightTextureByPixels; y+= _cellSizeByPixel)
-                _texture2D.SetPixels(x, y, _cellSizeByPixel, _cellSizeByPixel, _colorsManager[indexOfColorsArray]);
+        for (int x = 0; x < _widthTexturePerPixels; x+= _cellSizePerPixel)
+            for (int y = 0; y < _heightTexturePerPixels; y+= _cellSizePerPixel)
+                _texture2D.SetPixels(x, y, _cellSizePerPixel, _cellSizePerPixel, _colorsManager[indexOfColorsArray]);
     }
 
     
@@ -59,7 +61,7 @@ public class GenerateTextureManager : MonoBehaviour
 
     public void SetCellColor(int xCell, int yCell, int indexOfColorsArray)
     {
-        _texture2D.SetPixels(xCell * _cellSizeByPixel, yCell * _cellSizeByPixel, _cellSizeByPixel, _cellSizeByPixel, _colorsManager[indexOfColorsArray]);
+        _texture2D.SetPixels(xCell * _cellSizePerPixel, yCell * _cellSizePerPixel, _cellSizePerPixel, _cellSizePerPixel, _colorsManager[indexOfColorsArray]);
     }
 
     public void Apply()
@@ -75,9 +77,9 @@ public class GenerateTextureManager : MonoBehaviour
 
     public void SetTextureColorApply(CellsBase field)
     {
-        for (int x = 0; x < _widthTextureByPixels; x += _cellSizeByPixel)
-            for (int y = 0; y < _heightTextureByPixels; y += _cellSizeByPixel)
-                _texture2D.SetPixels(x, y, _cellSizeByPixel, _cellSizeByPixel, _colorsManager[field[x, y]]);
+        for (int x = 0; x < _widthTexturePerPixels; x += _cellSizePerPixel)
+            for (int y = 0; y < _heightTexturePerPixels; y += _cellSizePerPixel)
+                _texture2D.SetPixels(x, y, _cellSizePerPixel, _cellSizePerPixel, _colorsManager[field[x + y * _cellsPerHorizontal]]);
         _texture2D.Apply();
     }
 
@@ -86,4 +88,5 @@ public class GenerateTextureManager : MonoBehaviour
         _texture2D.SetPixelData(cells.ArrayColor, 0);
         _texture2D.Apply();
     }
+
 }
