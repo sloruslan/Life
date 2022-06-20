@@ -24,15 +24,9 @@ public struct CellsBase
         ArrayColor = new byte[width * height * 3];
     }
 
-    public CellsBase(byte[] bytes)
+    public CellsBase(byte[] value, byte[] color)
     {
-        Array = new byte[bytes.Length];
-        ArrayColor = new byte[bytes.Length * 3];
-
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            Array[i] = bytes[i];
-            ArrayColor[i * 3 + 1] = (byte)(bytes[i] == 1 ? 255 : 0);
-        }
+        Array = value;
+        ArrayColor = color;
     }
 }

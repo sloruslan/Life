@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Diagnostics;
-using Unity.Jobs;
 
 [RequireComponent(typeof(GenerateTextureManager))]
 [RequireComponent(typeof(GameLifeJob))]
@@ -24,7 +23,6 @@ public class GameLifeManager : MonoBehaviour
 
     private GameLife _gameLife;
     private GameLifeJob _gameLifeJob;
-    private JobHandle _jobHandle;
 
     public ETypeOfRender typeRender;
     public ETypeOfCalc typeCalc;
@@ -55,6 +53,7 @@ public class GameLifeManager : MonoBehaviour
         _texture.Init(this);
 
         _gameLifeJob = GetComponent<GameLifeJob>();
+        _gameLifeJob.WaitJobCompletedEvent += OnWaitJobCompleted;
     }
 
     private CellsBase _field;
@@ -101,10 +100,17 @@ public class GameLifeManager : MonoBehaviour
         }
         else
         {
-            _ = _gameLifeJob.NextGeneration(_field);
+            _gameLifeJob.NextGeneration(_field);
         }
         sw.Stop();
         UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds); 
+    }
+
+    private void OnWaitJobCompleted(CellsBase newField)
+    {
+        _field = newField;
+        TextureRefresh();
+        StartCoroutine(TickRate());
     }
 
     private void TextureRefresh()
