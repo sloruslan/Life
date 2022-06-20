@@ -1,15 +1,15 @@
 public struct CellsBase
 {
-    public byte[,] Array;
+    public byte[] Array;
     
-    public byte this[int x, int y]
+    public byte this[int x]
     {
-        get => Array[x, y];
+        get => Array[x];
         set
         {
-            Array[x, y] = value;
+            Array[x] = value;
 
-            ArrayColor[x * 3 + y * Width * 3 + 1] = (byte)(value == 1 ? 255 : 0);
+            ArrayColor[x * 3 + 1] = (byte)(value == 1 ? 255 : 0);
         }
     }
 
@@ -22,7 +22,7 @@ public struct CellsBase
     {
         Width = width;
         Height = height;
-        Array = new byte[width, height];
+        Array = new byte[width * height];
         ArrayColor = new byte[width * height * 3];
     }
 }
