@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Life.Core\Life.Server.Core.csproj" />
     <ProjectReference Include="..\Life.Server.Core\Life.Server.Core.csproj" />
     <ProjectReference Include="..\Life.Server.Infrastructure\Life.Server.Infrastructure.csproj" />
   </ItemGroup>
