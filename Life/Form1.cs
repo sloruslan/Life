@@ -2,7 +2,7 @@ using Life.Server.Infrastructure.Managers;
 using Life.Server.Core.Domain;
 using System.Drawing;
 
-namespace Life
+namespace Life.Client.WinForms
 {
     public partial class Form1 : Form
     {

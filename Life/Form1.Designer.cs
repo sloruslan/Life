@@ -1,4 +1,4 @@
-﻿namespace Life
+﻿namespace Life.Client.WinForms
 {
     partial class Form1
     {

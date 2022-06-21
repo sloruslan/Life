@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life", "Life\Life.csproj", "{8D5E3226-9D38-49C3-861A-F0EF702B2C88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Client.WinForms", "Life\Life.Client.WinForms.csproj", "{8D5E3226-9D38-49C3-861A-F0EF702B2C88}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Server.Core", "Life.Core\Life.Server.Core.csproj", "{AFBB557B-C714-4545-ACFB-82D34DAEB6A4}"
 EndProject
@@ -19,9 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unity", "Unity", "{A3E01A99
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A9EDEA71-54C3-4FFC-896A-AA273FCD7A22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life.Shared", "Life.Shared\Life.Shared.csproj", "{7E64A96D-0525-4B3D-9F4C-E1B951DA18AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Shared", "Life.Shared\Life.Shared.csproj", "{7E64A96D-0525-4B3D-9F4C-E1B951DA18AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life.Server.Infrastructure", "Life.Server.Infrastructure\Life.Server.Infrastructure.csproj", "{8ABBC24D-EBEC-40AF-8448-C872DF27AB26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Server.Infrastructure", "Life.Server.Infrastructure\Life.Server.Infrastructure.csproj", "{8ABBC24D-EBEC-40AF-8448-C872DF27AB26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

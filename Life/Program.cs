@@ -1,4 +1,4 @@
-namespace Life
+namespace Life.Client.WinForms
 {
     internal static class Program
     {
