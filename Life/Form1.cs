@@ -1,5 +1,5 @@
-using Life.Server.Managers;
-using Life.Server.Domain;
+using Life.Server.Infrastructure.Managers;
+using Life.Server.Core.Domain;
 using System.Drawing;
 
 namespace Life
@@ -41,7 +41,7 @@ namespace Life
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            field = CalcGeneration.NextGeneration(field, rows, cols);
+            field = CalcGeneration.NextGeneration(field);
             Risov(field);
             
         }
@@ -61,7 +61,7 @@ namespace Life
 
             plot = (int)numDensity.Value;
 
-            field = CalcGeneration.StartGeneration(size, rows, cols, plot);
+            field = CalcGeneration.StartGeneration<Cell>(rows, cols, plot);
             Risov(field);
         }
 

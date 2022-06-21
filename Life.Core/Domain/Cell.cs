@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Life.Server.Core.Contracts.Domain;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Life.Server.Domain
+namespace Life.Server.Core.Domain
 {
-    public class Cell
+    public class Cell : ICellIsLife
     {
         private bool _isLife;
         public bool IsLife 
