@@ -1,5 +1,5 @@
-using Life.Core.Managers;
-using Life.Domain;
+using Life.Server.Managers;
+using Life.Server.Domain;
 using System.Drawing;
 
 namespace Life
@@ -46,61 +46,7 @@ namespace Life
             
         }
 
-        /*private Cell[,] NextGeneration(Cell[,] current)
-        {
-            var newFiled = new Cell[cols, rows];
-
-            for (int x = 0; x < cols; x++)
-            {
-                for (int y = 0; y < rows; y++)
-                {
-                    var countSosedi = SosediCount(current, x, y);
-                    var currentCell = current[x, y];
-                    var isLife = currentCell.IsLife;
-                    
-                    if (isLife)
-                    {
-                        if ((countSosedi == 2) | (countSosedi == 3))
-                        {
-                            newFiled[x, y] = currentCell;
-                        }
-                        else newFiled[x, y] = new Cell();
-                    }
-                    else
-                    {
-                        if (countSosedi == 3)
-                        {
-                            newFiled[x, y] = new Cell() { IsLife = true };
-                        }
-                        else newFiled[x, y] = currentCell;
-                    }   
-                    
-                }
- 
-            }
-            return newFiled;
-        }*/
-
-        /*private int SosediCount(Cell[,] cells, int x, int y)
-        {
-            var res = 0;
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-                    var col = x + i;
-                    var row = y + j;
-                    
-                    if ((col < 0) || (row < 0) || (col >= cols) || (row >= rows) || ((col == x) && (row == y)))
-                    {
-                        continue;
-                    }
-
-                    if (cells[col, row].IsLife) res++;
-                }
-            }
-            return res;
-        }*/
+        
         private void button2_Click(object sender, EventArgs e)
         {
             StopGame();
