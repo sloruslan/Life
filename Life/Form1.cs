@@ -61,7 +61,7 @@ namespace Life
 
             plot = (int)numDensity.Value;
 
-            field = CalcGeneration.StartGeneration<Cell>(rows, cols, plot);
+            field = CalcGeneration.StartGeneration<Cell>(cols, rows, plot);
             Risov(field);
         }
 
