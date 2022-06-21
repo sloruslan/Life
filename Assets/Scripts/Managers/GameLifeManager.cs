@@ -43,8 +43,8 @@ public class GameLifeManager : MonoBehaviour
 
     public void Awake()
     {
-        PixelsPerHorizontal = Screen.width - Screen.width % PixelsPerCell;
-        PixelsPerVercital = Screen.height - Screen.height % PixelsPerCell;
+        PixelsPerHorizontal = PixelsPerHorizontal > 0 ? PixelsPerHorizontal : Screen.width - Screen.width % PixelsPerCell;
+        PixelsPerVercital = PixelsPerVercital > 0 ? PixelsPerVercital: Screen.height - Screen.height % PixelsPerCell;
 
         CellsPerHorizontal = PixelsPerHorizontal / PixelsPerCell;
         CellsPerVertical = PixelsPerVercital / PixelsPerCell;
@@ -82,6 +82,7 @@ public class GameLifeManager : MonoBehaviour
         StartCoroutine(TickRate());
     }
 
+    Stopwatch sw = new Stopwatch();
     private IEnumerator TickRate()
     {
         if (TimeOfTick == 0f)
@@ -89,7 +90,8 @@ public class GameLifeManager : MonoBehaviour
         else
             yield return new WaitForSeconds(TimeOfTick);
 
-        Stopwatch sw = new Stopwatch();
+
+        sw.Reset();
         sw.Start();
 
         if (typeCalc == ETypeOfCalc.Mono)
@@ -97,13 +99,14 @@ public class GameLifeManager : MonoBehaviour
             _field = _gameLife.NextGeneration(_field);
             TextureRefresh();
             StartCoroutine(TickRate());
+            sw.Stop();
+            UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds);
         }
         else
         {
             _gameLifeJob.NextGeneration(_field);
         }
-        sw.Stop();
-        UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds); 
+         
     }
 
     private void OnWaitJobCompleted(CellsBase newField)
@@ -111,6 +114,8 @@ public class GameLifeManager : MonoBehaviour
         _field = newField;
         TextureRefresh();
         StartCoroutine(TickRate());
+        sw.Stop();
+        UnityEngine.Debug.Log("NextGeneration:" + sw.ElapsedMilliseconds);
     }
 
     private void TextureRefresh()

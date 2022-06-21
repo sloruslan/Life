@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 292592380}
   - component: {fileID: 292592377}
   - component: {fileID: 292592378}
+  - component: {fileID: 292592382}
   m_Layer: 0
   m_Name: CellsGrid
   m_TagString: Untagged
@@ -367,6 +368,20 @@ MonoBehaviour:
   PixelsPerCell: 1
   StartChanceOfLifeForCell: 10
   typeRender: 1
+  typeCalc: 1
+--- !u!114 &292592382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292592369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18fb47bdde1e2a046957961a919fb464, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InnerLoop: 5
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

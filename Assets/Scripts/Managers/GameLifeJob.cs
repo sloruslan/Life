@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Events;
+using Unity.Burst;
 
 public class GameLifeJob : MonoBehaviour
 {
@@ -32,7 +33,7 @@ public class GameLifeJob : MonoBehaviour
 
     [Range(1, 50)]
     public int InnerLoop = 5;
-
+    private bool _isRun = false;
     public void CreateJob(CellsBase inputCells) 
     {
         NextGenerationJob nexGenJob = new NextGenerationJob();
@@ -63,12 +64,12 @@ public class GameLifeJob : MonoBehaviour
         
 
         handle = nexGenJob.Schedule(inputArray.Length, InnerLoop);
-        
-        handle.Complete();
+        _isRun = true;
+        //handle.Complete();
 
         sw.Stop();
         Debug.Log("CreateJob:" + sw.ElapsedMilliseconds);
-        StartCoroutine(WaitJobCompleted());
+        //StartCoroutine(WaitJobCompleted());
     }
 
     private void OnDisable()
@@ -78,17 +79,35 @@ public class GameLifeJob : MonoBehaviour
         outputArrayColor.Dispose();
     }
 
+    /*
     private IEnumerator WaitJobCompleted()
     {
         if (handle.IsCompleted)
         {
+            count0 = 0;
             WaitJobCompletedEvent?.Invoke(new CellsBase(outputArrayValue.ToArray(), outputArrayColor.ToArray()));
         }
         else
+        {
+            Debug.Log("count0 " + count0);
+            count0++;
             yield return null;
+        }
     }
+    */
+    private void LateUpdate()
+    {
+        if (_isRun && handle.IsCompleted)
+        {
+            _isRun = false;
+            handle.Complete();
+            WaitJobCompletedEvent?.Invoke(new CellsBase(outputArrayValue.ToArray(), outputArrayColor.ToArray()));
+        }
+    }
+    
 
-    public struct NextGenerationJob : IJobParallelFor
+    [BurstCompile]
+    private struct NextGenerationJob : IJobParallelFor
     {
         [ReadOnly]
         public NativeArray<byte> inputArray;
