@@ -1,86 +1,97 @@
+using Grpc.Net.Client;
+using Life.Clients.WinForms.Domain;
+using Life.Clients.WinForms.ViewModel;
 using Life.Server.Infrastructure.Managers;
-using Life.Server.Core.Domain;
-using System.Drawing;
+using Life.Shared.Protos;
 
 namespace Life.Clients.WinForms
 {
     public partial class Form1 : Form
     {
-        private Graphics g;
-        private int size;
-        private Cell[,] field;
-        private int rows;
-        private int cols;
-        private int plot;
-
+        private int _width;
+        private int _height;
+        private int _sizeCell;
+        private int _density;
+        private CellsViewModel _cellsVM;
+        private CellStateField _cells;
+        private GrpcChannel _channel;
+        private GameService.GameServiceClient _client;
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void StartGame()
-        {
-            if (timer1.Enabled)
-            {
-                return;
-            }
-            
-            timer1.Start();
-        }
-
-
-        private void StopGame()
-        {
-            timer1.Stop();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void ButtonStart_Click(object sender, EventArgs e)
         {
             StartGame();
         }
 
-        
-
-        
-        private void button2_Click(object sender, EventArgs e)
+        private void ButtonStop_Click(object sender, EventArgs e)
         {
             StopGame();
         }
 
-        private void genFirstFieldBT_Click(object sender, EventArgs e)
+        private void ButtonFirstGeneration_Click(object sender, EventArgs e)
         {
-            size = (int)sizeUpDown.Value;
+            _sizeCell = (int)NUDSizeCell.Value;
+            _width = pictureBox1.Width / _sizeCell;
+            _height = pictureBox1.Height / _sizeCell;
+            _density = (int)NUDDensity.Value;
 
-            rows = pictureBox1.Height / size;
-            cols = pictureBox1.Width / size;
+            _cellsVM = new CellsViewModel(pictureBox1, _width, _height, _sizeCell);
+            _cells = new CellStateField(_width, _height);
 
-            plot = (int)numDensity.Value;
-
-            field = CalcGeneration.StartGeneration<Cell>(cols, rows, plot);
-            Risov(field);
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            field = CalcGeneration.NextGeneration(field);
-            Risov(field);
-        }
-
-
-        private void Risov(Cell[,] cells)
-        {
-            pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            g = Graphics.FromImage(pictureBox1.Image);
-
-            for (int x = 0; x < cols; x++)
+            try
             {
-                for (int y = 0; y < rows; y++)
-                {
-                    g.FillRectangle(cells[x, y].Color, x * size, y * size, size, size);
-                }
-            }
-            pictureBox1.Refresh();
 
+                if (_channel == null || _client == null)
+                {
+                    _channel = GrpcChannel.ForAddress("http://192.168.23.194:7233");
+                    _client = new GameService.GameServiceClient(_channel);
+                }
+
+                var res = _client.SettingApplication(new Settings() { Horizontal = _width, Vertical = _height, Density = _density });
+
+                _cells.CopyFrom(res.Array.ToArray());
+
+                _cellsVM.RefreshImage(_cells);
+            }
+            catch
+            {
+                StopGame();
+            }
+        }
+
+        private void StartGame()
+        {
+            if (TimerTicks.Enabled)
+            {
+                return;
+            }
+
+            TimerTicks.Start();
+        }
+
+        private void StopGame()
+        {
+            TimerTicks.Stop();
+        }
+
+        private void TimerTickRate(object sender, EventArgs e)
+        {
+
+            try
+            {
+                var res = _client.StartGame(new ClearMessage());
+
+                _cells.CopyFrom(res.Array.ToArray());
+
+                _cellsVM.RefreshImage(_cells);
+            }
+            catch
+            {
+                StopGame();
+            }
         }
     }
 }
