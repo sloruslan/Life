@@ -2,8 +2,8 @@
 
 namespace Life.Server.Core.Contracts.Managers
 {
-    public interface IFirstGeneration
+    public interface IFirstGeneration<T> where T : ICellIsLife, new()
     {
-        public static abstract T[,] StartGeneration<T>(int perHorizontal, int perVertical, int density) where T : ICellIsLife, new();
+        public static abstract T[,] StartGeneration(int perHorizontal, int perVertical, int density);
     }
 }

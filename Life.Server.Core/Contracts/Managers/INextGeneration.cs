@@ -8,8 +8,8 @@ using Life.Server.Core.Domain;
 
 namespace Life.Server.Core.Contracts.Managers
 {
-    public interface INextGeneration
+    public interface INextGeneration<T> where T : ICellIsLife, new()
     {
-        public static abstract T[,] NextGeneration<T>(T[,] current) where T : ICellIsLife, new();
+        public static abstract T[,] NextGeneration(T[,] current); 
     }
 }
