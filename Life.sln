@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Server.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Clients.WinForms", "Life.Clients.WinForms\Life.Clients.WinForms.csproj", "{38A6B56A-9EFD-40B6-8EC9-623FACB32621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Life.Server.Core", "Life.Server.Core\Life.Server.Core.csproj", "{9DAD9A72-D23F-4525-9508-23EC827A3FB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Server.Core", "Life.Server.Core\Life.Server.Core.csproj", "{9DAD9A72-D23F-4525-9508-23EC827A3FB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

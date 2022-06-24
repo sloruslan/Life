@@ -39,12 +39,7 @@ namespace Life.Clients.WinForms
             StartGame();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            field = CalcGeneration.NextGeneration(field);
-            Risov(field);
-            
-        }
+        
 
         
         private void button2_Click(object sender, EventArgs e)
@@ -65,27 +60,12 @@ namespace Life.Clients.WinForms
             Risov(field);
         }
 
-        /*private Cell[,] StartGeneration()
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            size = (int)sizeUpDown.Value;
+            field = CalcGeneration.NextGeneration(field);
+            Risov(field);
+        }
 
-            rows = pictureBox1.Height / size;
-            cols = pictureBox1.Width / size;
-
-            Cell[,] res = new Cell[cols, rows];
-
-            Random random = new Random();
-            for (int x = 0; x < cols; x++)
-            {
-                for (int y = 0; y < rows; y++)
-                {
-                    res[x, y] = new Cell() { IsLife = (random.Next((int)numDensity.Value) == 0) };
-                }
-            }
-
-            return res;
-
-        }*/
 
         private void Risov(Cell[,] cells)
         {
