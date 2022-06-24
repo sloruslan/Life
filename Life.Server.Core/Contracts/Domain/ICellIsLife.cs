@@ -8,6 +8,6 @@ namespace Life.Server.Core.Contracts.Domain
 {
     public interface ICellIsLife
     {
-        public bool IsLife { get; set; }
+        public bool IsLife { get; set; } 
     }
 }
