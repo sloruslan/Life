@@ -46,7 +46,7 @@ namespace Life.Clients.WinForms
 
                 if (_channel == null || _client == null)
                 {
-                    _channel = GrpcChannel.ForAddress("http://192.168.23.194:7233");
+                    _channel = GrpcChannel.ForAddress("http://localhost:5231");
                     _client = new GameService.GameServiceClient(_channel);
                 }
 
