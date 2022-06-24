@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Clients.WinForms", "Li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Life.Server.Core", "Life.Server.Core\Life.Server.Core.csproj", "{9DAD9A72-D23F-4525-9508-23EC827A3FB8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LifeServer", "GrpcService\LifeServer.csproj", "{A7521927-8439-4E07-995D-3859510DC3D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{9DAD9A72-D23F-4525-9508-23EC827A3FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DAD9A72-D23F-4525-9508-23EC827A3FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DAD9A72-D23F-4525-9508-23EC827A3FB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7521927-8439-4E07-995D-3859510DC3D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7521927-8439-4E07-995D-3859510DC3D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7521927-8439-4E07-995D-3859510DC3D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7521927-8439-4E07-995D-3859510DC3D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 		{8ABBC24D-EBEC-40AF-8448-C872DF27AB26} = {903CAFDB-7E4D-4DBB-BB3B-8BC3D73D9C5E}
 		{38A6B56A-9EFD-40B6-8EC9-623FACB32621} = {D77959D4-5412-484E-BAE9-D8F5F2EB4F7C}
 		{9DAD9A72-D23F-4525-9508-23EC827A3FB8} = {903CAFDB-7E4D-4DBB-BB3B-8BC3D73D9C5E}
+		{A7521927-8439-4E07-995D-3859510DC3D2} = {903CAFDB-7E4D-4DBB-BB3B-8BC3D73D9C5E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6DA7F780-CD46-4E20-BBBC-3CE13087EB9B}
