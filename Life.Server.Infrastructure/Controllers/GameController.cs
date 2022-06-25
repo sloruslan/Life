@@ -2,8 +2,7 @@ using Google.Protobuf;
 using Grpc.Core;
 using Life.Server.Core.Domain;
 using Life.Server.Infrastructure.Managers;
-using Life.Shared.Domain;
-using Life.Shared.Protos;
+using Life.Shared.Domain.Protos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,23 +27,18 @@ namespace Life.Server.Infrastructure.Controllers
 
             //GameLoop<Cell>.Cells = new Cell[request.Cols, request.Rows];
 
-            var t = ClassOfData.Age;
-
             await Task.Run(() =>
             {
-                if (!GameLoop<Cell>.Cells.ContainsKey(context.Peer))
+                if (!GameLoop.Cells.ContainsKey(context.Peer))
                 {
-                    GameLoop<Cell>.Cells.Add(context.Peer, GameLoop<Cell>.StartGeneration(request.Horizontal, request.Vertical, request.Density));
+                    GameLoop.Cells.Add(context.Peer, GameLoop.StartGeneration(request.Horizontal, request.Vertical, request.Density));
                 }
                 else
                 {
-                    GameLoop<Cell>.Cells[context.Peer] = GameLoop<Cell>.StartGeneration(request.Horizontal, request.Vertical, request.Density);
+                    GameLoop.Cells[context.Peer] = GameLoop.StartGeneration(request.Horizontal, request.Vertical, request.Density);
                 }
-                
-                //Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer] = GameLoop<Cell>.StartGeneration(request.Horizontal, request.Vertical, request.Density)); 
-                Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer]); 
 
-                res.Array = ByteString.CopyFrom(field.State);
+                res.Array = ByteString.CopyFrom(GameLoop.GetByteArray(GameLoop.Cells[context.Peer]));
             });
                 
             return res;
@@ -56,9 +50,9 @@ namespace Life.Server.Infrastructure.Controllers
 
             await Task.Run(() =>
             {
-                Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer] = GameLoop<Cell>.NextGeneration(GameLoop<Cell>.Cells[context.Peer]));
+                GameLoop.Cells[context.Peer] = GameLoop.NextGeneration(GameLoop.Cells[context.Peer]);
 
-                res.Array = ByteString.CopyFrom(field.State);
+                res.Array = ByteString.CopyFrom(GameLoop.GetByteArray(GameLoop.Cells[context.Peer]));
             });
 
             return res;

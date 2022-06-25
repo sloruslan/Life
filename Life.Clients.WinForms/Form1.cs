@@ -2,7 +2,7 @@ using Grpc.Net.Client;
 using Life.Clients.WinForms.Domain;
 using Life.Clients.WinForms.ViewModel;
 using Life.Server.Infrastructure.Managers;
-using Life.Shared.Protos;
+using Life.Shared.Domain.Protos;
 
 namespace Life.Clients.WinForms
 {
@@ -19,6 +19,8 @@ namespace Life.Clients.WinForms
         public Form1()
         {
             InitializeComponent();
+
+            TimerTicks.Interval = 250;
         }
 
         private void ButtonStart_Click(object sender, EventArgs e)
@@ -55,6 +57,7 @@ namespace Life.Clients.WinForms
                 _cells.CopyFrom(res.Array.ToArray());
 
                 _cellsVM.RefreshImage(_cells);
+                //_cellsVM.RefreshImageInvoke(_cells);
             }
             catch
             {
@@ -87,6 +90,7 @@ namespace Life.Clients.WinForms
                 _cells.CopyFrom(res.Array.ToArray());
 
                 _cellsVM.RefreshImage(_cells);
+                //_cellsVM.RefreshImageInvoke(_cells);
             }
             catch
             {

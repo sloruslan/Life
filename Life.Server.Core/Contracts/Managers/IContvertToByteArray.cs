@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace Life.Server.Core.Contracts.Managers
 {
-    public interface IGameLoop<T> : IFirstGeneration<T>, INextGeneration<T>, INeighboursCount<T> where T : ICellState, new()
+    public interface IContvertToByteArray<T> where T : ICellState, new()
     {
+        public static abstract Dictionary<string, T[,]> Cells { get; set; }
+        public static abstract byte[] GetByteArray(T[,] cells);
     }
 }

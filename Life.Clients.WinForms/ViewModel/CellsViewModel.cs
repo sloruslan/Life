@@ -39,5 +39,21 @@ namespace Life.Clients.WinForms.ViewModel
             
             _pictureBox.Refresh();  
         }
+
+        public void RefreshImageInvoke(CellStateField cells)
+        {
+            Parallel.For(0, _width, x =>
+            {
+                Parallel.For(0, _height, y =>
+                    {
+                        _pictureBox.BeginInvoke(() =>
+                        {
+                            _graphics.FillRectangle(cells[x, y], x * _sizeCell, y * _sizeCell, _sizeCell, _sizeCell);
+                        });
+                    });
+            });
+
+            _pictureBox.Refresh();
+        }
     }
 }
