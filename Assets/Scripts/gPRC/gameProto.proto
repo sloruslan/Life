@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option csharp_namespace = "Protos";
+
+package gameProto;
+
+
+service GameService {
+
+  rpc SettingApplication (Settings) returns (SettingsResponse){}
+
+  rpc StartGame (ClearMessage) returns (Frame){}
+  
+}
+
+message ClearMessage {
+	string text = 1;
+}
+
+
+
+message Settings {
+  int32 Horizontal = 1;
+  int32 Vertical = 2;
+  int32 Density = 3;
+}
+
+
+message SettingsResponse {
+  string Message = 1;
+  bytes Array = 2;
+}
+
+
+message Frame {
+  int32 Iteration = 1;
+  bytes Array = 2;
+}
+
+
