@@ -18,5 +18,17 @@ public class TextureData
 
         return result;
     }
+
+    public static byte[] GetTextureData(byte[] data, int pixelsPerCell)
+    {
+        byte[] result = new byte[data.Length * 3 * pixelsPerCell];
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            result[i * 3 + 1] = data[i] == 1 ? (byte)255 : (byte)0;
+        }
+
+        return result;
+    }
 }
 
