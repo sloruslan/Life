@@ -40,28 +40,25 @@ namespace Life.Server.Infrastructure.Controllers
                 {
                     GameLoop<Cell>.Cells[context.Peer] = GameLoop<Cell>.StartGeneration(request.Horizontal, request.Vertical, request.Density);
                 }
-                
+
                 //Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer] = GameLoop<Cell>.StartGeneration(request.Horizontal, request.Vertical, request.Density)); 
-                Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer]); 
+                Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer]);
 
                 res.Array = ByteString.CopyFrom(field.State);
             });
-                
+
             return res;
         }
 
-        public override async Task<Frame> StartGame(ClearMessage request, ServerCallContext context)
+        public override async Task StartGame(ClearMessage request, IServerStreamWriter<Frame> resonseStream, ServerCallContext context)
         {
-            var res = new Frame();
-
-            await Task.Run(() =>
+            while (true)
             {
                 Cells field = new Cells(GameLoop<Cell>.Cells[context.Peer] = GameLoop<Cell>.NextGeneration(GameLoop<Cell>.Cells[context.Peer]));
 
-                res.Array = ByteString.CopyFrom(field.State);
-            });
+                await resonseStream.WriteAsync(new Frame() { Array = ByteString.CopyFrom(field.State) });
+            }
 
-            return res;
         }
 
     }

@@ -1,3 +1,4 @@
+using Grpc.Core;
 using Grpc.Net.Client;
 using Life.Clients.WinForms.Domain;
 using Life.Clients.WinForms.ViewModel;
@@ -61,14 +62,23 @@ namespace Life.Clients.WinForms
             }
         }
 
-        private void StartGame()
+        private async void StartGame()
         {
-            if (TimerTicks.Enabled)
+            /*if (TimerTicks.Enabled)
             {
                 return;
             }
 
-            TimerTicks.Start();
+            TimerTicks.Start();*/
+            var call = _client.StartGame(new ClearMessage());
+
+            while (await call.ResponseStream.MoveNext())
+            {
+                var res = call.ResponseStream.Current;
+                _cells.CopyFrom(res.Array.ToArray());
+
+                _cellsVM.RefreshImage(_cells);
+            }
         }
 
         private void StopGame()
@@ -79,7 +89,7 @@ namespace Life.Clients.WinForms
         private void TimerTickRate(object sender, EventArgs e)
         {
 
-            try
+            /*try
             {
                 var res = _client.StartGame(new ClearMessage());
 
@@ -90,7 +100,7 @@ namespace Life.Clients.WinForms
             catch
             {
                 StopGame();
-            }
+            }*/
         }
     }
 }

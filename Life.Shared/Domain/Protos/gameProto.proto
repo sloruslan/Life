@@ -9,7 +9,7 @@ service GameService {
 
   rpc SettingApplication (Settings) returns (SettingsResponse);
 
-  rpc StartGame (ClearMessage) returns (Frame);
+  rpc StartGame (ClearMessage) returns (stream Frame);
   
 }
 
