@@ -8,11 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.43.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.2" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Life.Server.Core\Life.Server.Core.csproj" />
+    <ProjectReference Include="..\Life.Shared\Life.Shared.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

@@ -6,25 +6,23 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+	<EnablePreviewFeatures>True</EnablePreviewFeatures>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.43.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.44.0">
+    <PackageReference Include="Google.Protobuf" Version="3.21.2" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.46.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.47.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Life.Server.Core\Life.Server.Core.csproj" />
-    <ProjectReference Include="..\Life.Server.Infrastructure\Life.Server.Infrastructure.csproj" />
     <ProjectReference Include="..\Life.Shared\Life.Shared.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
 		<Protobuf Include="..\Life.Shared\Domain\Protos\gameProto.proto" GrpcServices="Client" />
 	</ItemGroup>
-	
 </Project>

@@ -8,11 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.43.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Life.Server.Infrastructure\Life.Server.Infrastructure.csproj" />
+    <ProjectReference Include="..\Life.Shared\Life.Shared.csproj" />
   </ItemGroup>
 
 </Project>
