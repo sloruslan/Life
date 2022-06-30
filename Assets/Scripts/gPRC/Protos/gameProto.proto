@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-option csharp_namespace = "Life.Shared.Domain.Protos";
+option csharp_namespace = "Protos";
 
 package gameProto;
 
 
 service GameService {
 
-  rpc SettingApplication (Settings) returns (SettingsResponse);
+  rpc SettingApplication (Settings) returns (SettingsResponse){}
 
-  rpc StartGame (ClearMessage) returns (Frame);
+  rpc StartGame (ClearMessage) returns (Frame){}
   
 }
 
