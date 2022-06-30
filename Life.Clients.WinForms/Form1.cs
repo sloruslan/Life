@@ -1,7 +1,6 @@
 using Grpc.Net.Client;
 using Life.Clients.WinForms.Domain;
 using Life.Clients.WinForms.ViewModel;
-using Life.Server.Infrastructure.Managers;
 using Life.Shared.Domain.Protos;
 
 namespace Life.Clients.WinForms

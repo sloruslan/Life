@@ -20,7 +20,7 @@ namespace Life.Server.Infrastructure.Controllers
         {
             _logger = logger;
         }
-
+        //http://localhost:5231;https://localhost:7232;
         public override async Task<SettingsResponse> SettingApplication(Settings request, ServerCallContext context)
         {
             var res = new SettingsResponse() { Message = "Поле создано" };
