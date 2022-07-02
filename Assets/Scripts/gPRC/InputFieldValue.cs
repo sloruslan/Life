@@ -7,7 +7,24 @@ using System;
 
 public class InputFieldValue : MonoBehaviour
 {
-    public TMP_InputField inputField;
+    private TMP_InputField _inputField;
+
+    public float FontSize
+    {
+        get => InputField == null ? 14 : _inputField.textComponent.fontSize;
+        set => _inputField.textComponent.fontSizeMax = InputField == null ? 14 : value;
+    }
+
+    public TMP_InputField InputField
+    {
+        get
+        {
+            if (_inputField == null)
+                _inputField = GetComponent<TMP_InputField>();
+
+            return _inputField;
+        }
+    }
 
     public int GetValueInt
     {
@@ -15,9 +32,9 @@ public class InputFieldValue : MonoBehaviour
         {
             try
             {
-                return Convert.ToInt32(inputField.text);
+                return Convert.ToInt32(_inputField.text);
             }
-            catch (Exception ex)
+            catch 
             {
                 return 0;
             }
@@ -30,18 +47,13 @@ public class InputFieldValue : MonoBehaviour
         {
             try
             {
-                var value = inputField.text.Replace('.', ',');
+                var value = _inputField.text.Replace('.', ',');
                 return (float)Convert.ToDouble(value);
             }
-            catch (Exception ex)
+            catch 
             {
                 return 0;
             }
         }
-    }
-
-    private void Start()
-    {
-        inputField = GetComponent<TMP_InputField>();
     }
 }

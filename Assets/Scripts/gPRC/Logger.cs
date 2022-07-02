@@ -20,14 +20,32 @@ public class Logger : MonoBehaviour
     {
         SetActive(false);
     }
+
+    private static int _countOfMessage = 0;
+
     public static string Text
     {
         get { return _text.text; }
-        set { _text.text += DateTime.Now.ToLongTimeString() + ": " + value + Environment.NewLine; }
+        set 
+        {
+            if (_countOfMessage == 100)
+            {
+                _text.text = string.Empty;
+                _countOfMessage = 0;
+            }
+
+            _text.text += _countOfMessage.ToString("D3") + " " + DateTime.Now.ToLongTimeString() + ": " + value + Environment.NewLine; 
+            _countOfMessage++; 
+        }
     }
 
     public static void SetActive(bool value)
     {
         _rectTransformMain.gameObject.SetActive(value);
+    }
+
+    public static void SetActive()
+    {
+        _rectTransformMain.gameObject.SetActive(!_rectTransformMain.gameObject.activeSelf);
     }
 }

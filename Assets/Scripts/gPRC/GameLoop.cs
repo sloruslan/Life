@@ -24,10 +24,9 @@ public class GameLoop : MonoBehaviour
     [Range(0, 100)]
     public int StartChanceOfLifeForCell = 50;
 
-
     private Channel _channel;
     private GameService.GameServiceClient _client;
-
+    private Coroutine _gameLoopCoroutine = null;
     public void Init()//Awake()
     {
         if (CellsPerHorizontal <= 0)
@@ -54,7 +53,8 @@ public class GameLoop : MonoBehaviour
         _gameRender = GetComponent<GameRender>();
         _gameRender.Init(this);
 
-        Logger.Text = "GameLoop is completed";
+        Logger.Text = "=========================>>";
+        Logger.Text = "GameLoop::Init is completed";
 
         StartGame();
     }
@@ -75,7 +75,7 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            PixelsPerHorizontal = PixelsPerHorizontal > 0 ? PixelsPerHorizontal : CellsPerHorizontal * PixelsPerCell;
+            PixelsPerHorizontal = PixelsPerHorizontal > 0 && PixelsPerHorizontal >= CellsPerHorizontal * PixelsPerCell ? PixelsPerHorizontal : CellsPerHorizontal * PixelsPerCell;
         }
 
         if (CellsPerVertical <= 0)
@@ -85,50 +85,52 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            PixelsPerVercital = PixelsPerVercital > 0 ? PixelsPerVercital : CellsPerVertical * PixelsPerCell;
+            PixelsPerVercital = PixelsPerVercital > 0 && PixelsPerVercital >= CellsPerVertical * PixelsPerCell ? PixelsPerVercital : CellsPerVertical * PixelsPerCell;
         }
 
 
         _gameRender = GetComponent<GameRender>();
         _gameRender.Init(this);
 
-        Logger.Text = "GameLoop is completed";
+        Logger.Text = "=========================>>";
+        Logger.Text = "GameLoop::Init is completed";
 
         StartGame();
     }
 
     private void StartGame()
     {
-        Logger.Text = "StartGame()";
+        
+        Logger.Text = "GameLoop::StartGame()";
         try
         {
             if (_channel == null || _client == null)
             {   //http://46.72.251.132:7355
                 //_channel = Channel.ForAddress("http://46.72.251.132:7355");
                 _channel = new Channel("46.72.251.132:7355", ChannelCredentials.Insecure);
-                Logger.Text = "_channel created";
+                Logger.Text = "GameLoop::StartGame: _channel created";
                 _client = new GameService.GameServiceClient(_channel);
-                Logger.Text = "_client created";
+                Logger.Text = "GameLoop::StartGame: _client created";
             }
 
             var res = _client.SettingApplication(new Settings() { Horizontal = CellsPerHorizontal, Vertical = CellsPerVertical, Density = StartChanceOfLifeForCell });
-            Logger.Text = "_client.SettingApplication completed";
+            Logger.Text = "GameLoop::StartGame: _client.SettingApplication completed";
 
             //TextureRefresh(TextureData.GetTextureData(res.Array.ToByteArray()));
-            TextureRefresh(TextureGeneration.GetTextureDataGreen(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
-            Logger.Text = "TextureRefresh";
+            TextureRefresh(TextureGeneration.GetTextureDataGreen(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, _checkLandSpaceOrientation));
         }
         catch (System.Exception ex)
         {
-            Logger.Text = "Exception: " + ex.Message;
+            Logger.Text = "Exception GameLoop::StartGame: " + ex.Message;
             Logger.SetActive(true);
             return;
         }
 
+        StopAndRemoveCoroutine(_gameLoopCoroutine);
 
-        StartCoroutine(TickRate());
+        _gameLoopCoroutine = StartCoroutine(TickRate());
     }
-    
+
     private IEnumerator TickRate()
     {
         if (TimeOfTick == 0f)
@@ -136,12 +138,38 @@ public class GameLoop : MonoBehaviour
         else
             yield return new WaitForSeconds(TimeOfTick);
 
-        var res = _client.StartGame(new ClearMessage());
+        try
+        {
+            var res = _client.StartGame(new ClearMessage());
 
-        TextureRefresh(TextureGeneration.GetTextureDataGreen(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
+            
 
-        StartCoroutine(TickRate());
+            TextureRefresh(TextureGeneration.GetTextureDataGreen(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, _checkLandSpaceOrientation));
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Text = "Exception GameLoop::StartGame: " + ex.Message;
+            Logger.SetActive(true);
+            StopAndRemoveCoroutine(_gameLoopCoroutine);
+            yield break;
+        }
 
+        _gameLoopCoroutine = StartCoroutine(TickRate());
+    }
+
+    private void StopAndRemoveCoroutine(Coroutine coroutine)
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+    }
+
+    private bool _checkLandSpaceOrientation
+    {
+        //get => !(Input.deviceOrientation == DeviceOrientation.LandscapeLeft || Input.deviceOrientation == DeviceOrientation.LandscapeRight);
+        get => true;
     }
 
     private void TextureRefresh(byte[] data)

@@ -34,15 +34,20 @@ public class GameRender : MonoBehaviour
             _image = GetComponent<Image>();
             _image.sprite = _sprite;
         }
-
-        Logger.Text = "GameRender is completed";
     }
 
 
     public void SetTextureColorStreamApply(byte[] cells)
     {
-        _texture2D.SetPixelData(cells, 0);
-        _texture2D.Apply();
-        Logger.Text = "SetTextureColorStreamApply is completed";
+        try
+        {
+            _texture2D.SetPixelData(cells, 0);
+            _texture2D.Apply();
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Text = "Exception GameRender::SetTextureColorStreamApply: " + ex.Message;
+            Logger.SetActive(true);
+        }
     }
 }

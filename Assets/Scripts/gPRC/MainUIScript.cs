@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class MainUIScript : MonoBehaviour
+
+public class MainUIScript : UIBehaviour
 {
     public GameLoop gameLoop;
 
@@ -28,6 +30,54 @@ public class MainUIScript : MonoBehaviour
 
         gameLoop.Init(timeOfTick, pixelsPerCell, cellsPerHorizontal, cellsPerVertical, pixelsPerHorizontal, pixelsPerVercital);
 
-        mainUI.gameObject.SetActive(false);
+        IsActive = false;
+    }
+
+    public void DisableMainUI()
+    {
+        IsActive = false;
+    }
+
+    public bool IsActive 
+    { 
+        get => mainUI.gameObject.activeSelf; 
+        set 
+        { 
+            if (mainUI.gameObject.activeSelf == value) return;  
+            mainUI.gameObject.SetActive(value);
+
+            if (value)
+                UpdateFontSize();
+        } 
+    }
+
+    protected override void OnRectTransformDimensionsChange()
+    {
+        UpdateFontSize();
+        base.OnRectTransformDimensionsChange();
+    }
+
+    public void UpdateFontSize()
+    {
+        if (tick.InputField == null || pixelPerCell.InputField == null || cellsH.InputField == null || cellsV.InputField == null || pixH.InputField == null || pixV.InputField == null)
+            return;
+
+        float[] sizes = new float[6];
+
+        sizes[0] = tick.FontSize;
+        sizes[1] = pixelPerCell.FontSize;
+        sizes[2] = cellsH.FontSize;
+        sizes[3] = cellsV.FontSize;
+        sizes[4] = pixH.FontSize;
+        sizes[5] = pixV.FontSize;
+
+        float max = sizes[0];
+        foreach (var size in sizes)
+        {
+            if (size > max)
+                max = size;
+        }
+
+        tick.FontSize = pixelPerCell.FontSize = cellsH.FontSize = cellsV.FontSize = pixH.FontSize = pixV.FontSize = max;
     }
 }
