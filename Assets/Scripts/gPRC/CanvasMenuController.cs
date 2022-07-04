@@ -23,18 +23,7 @@ public class CanvasMenuController : MonoBehaviour
                     MainUIScript.IsActive = true;
             }
         }
-
-
-        if (Input.deviceOrientation != _currentOrientation)
-        {
-            _currentOrientation = Input.deviceOrientation;
-            if (_currentOrientation != DeviceOrientation.Unknown)
-                _lastKnowOrientation = _currentOrientation;
-
-            Logger.Text = $"_currentOrientation: {_currentOrientation}; _lastKnowOrientation: {_lastKnowOrientation}";
-        }
     }
 
-    private DeviceOrientation _currentOrientation = DeviceOrientation.Unknown;
-    private DeviceOrientation _lastKnowOrientation = DeviceOrientation.Unknown;
+    
 }

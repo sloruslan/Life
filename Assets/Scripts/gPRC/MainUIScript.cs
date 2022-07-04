@@ -16,7 +16,7 @@ public class MainUIScript : UIBehaviour
     public InputFieldValue pixV;
 
     public RectTransform mainUI;
-    public void StartGame()
+    public void FirstGeneration()
     {
         float timeOfTick = tick.GetValueFloat;
         int pixelsPerCell = pixelPerCell.GetValueInt;
@@ -29,8 +29,12 @@ public class MainUIScript : UIBehaviour
         pixelsPerCell = pixelsPerCell == 0 ? 8 : pixelsPerCell;
 
         gameLoop.Init(timeOfTick, pixelsPerCell, cellsPerHorizontal, cellsPerVertical, pixelsPerHorizontal, pixelsPerVercital);
+    }
 
+    public void StartGame()
+    {
         IsActive = false;
+        gameLoop.GameLoopControl();
     }
 
     public void DisableMainUI()

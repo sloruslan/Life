@@ -22,9 +22,12 @@ public class GameRender : MonoBehaviour
 
         _texture2D = new Texture2D(_widthTexturePerPixels, _heightTexturePerPixels, TextureFormat.RGB24, false);
 
-        _sprite = Sprite.Create(_texture2D, new Rect(0f, 0f, _widthTexturePerPixels, _heightTexturePerPixels), new Vector2(0.5f, 0.5f));
+        _sprite = Sprite.Create(_texture2D, new Rect(0f, 0f, _widthTexturePerPixels, _heightTexturePerPixels), new Vector2(0.5f, 0.5f), 32);
         _sprite.name = "mySprite";
+       
+        Debug.Log("pixelsPerUnit " + _sprite.pixelsPerUnit);
 
+        _spriteRenderer = null;
         if ((_spriteRenderer = GetComponent<SpriteRenderer>()) != null)
         {
             _spriteRenderer.sprite = _sprite;

@@ -56,7 +56,7 @@ public class GameLoop : MonoBehaviour
         Logger.Text = "=========================>>";
         Logger.Text = "GameLoop::Init is completed";
 
-        StartGame();
+        FirstGeneration();
     }
 
     public void Init(float timeOfTick, int pixelsPerCell, int cellsPerHorizontal, int cellsPerVertical, int pixelsPerHorizontal, int pixelsPerVercital)
@@ -95,12 +95,14 @@ public class GameLoop : MonoBehaviour
         Logger.Text = "=========================>>";
         Logger.Text = "GameLoop::Init is completed";
 
-        StartGame();
+        FirstGeneration();
     }
 
-    private void StartGame()
+    private void FirstGeneration()
     {
-        
+        //StopAndRemoveCoroutine(ref _gameLoopCoroutine);
+        StopAndRemoveCoroutine();
+
         Logger.Text = "GameLoop::StartGame()";
         try
         {
@@ -113,22 +115,35 @@ public class GameLoop : MonoBehaviour
                 Logger.Text = "GameLoop::StartGame: _client created";
             }
 
+
+            StartDeviceOrientationSimple = GetDeviceOrientationSimple;
             var res = _client.SettingApplication(new Settings() { Horizontal = CellsPerHorizontal, Vertical = CellsPerVertical, Density = StartChanceOfLifeForCell });
             Logger.Text = "GameLoop::StartGame: _client.SettingApplication completed";
 
-            //TextureRefresh(TextureData.GetTextureData(res.Array.ToByteArray()));
-            TextureRefresh(TextureGeneration.GetTextureDataGreen(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, _checkLandSpaceOrientation));
+
+            TextureRefresh(TextureGeneration.GetTextureDataGreenParallelFor(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
         }
         catch (System.Exception ex)
         {
-            Logger.Text = "Exception GameLoop::StartGame: " + ex.Message;
+            Logger.Text = "Exception StartGame::TickRate:Message " + ex.Message;
+            Logger.Text = "Exception StartGame::TickRate:Source " + ex.Source;
+            Logger.Text = "Exception StartGame::TickRate:StackTrace " + ex.StackTrace;
+            Logger.Text = "Exception StartGame::TickRate:HelpLink " + ex.HelpLink;
+            Logger.Text = "StartDeviceOrientationSimple " + StartDeviceOrientationSimple.ToString();
+            Logger.Text = "GetDeviceOrientationSimple " + GetDeviceOrientationSimple.ToString();
+            Logger.Text = "CurrentDeviceOrientationSimple " + CurrentDeviceOrientationSimple.ToString();
             Logger.SetActive(true);
             return;
         }
+    }
 
-        StopAndRemoveCoroutine(_gameLoopCoroutine);
-
-        _gameLoopCoroutine = StartCoroutine(TickRate());
+    public void GameLoopControl()
+    {
+        if (_gameLoopCoroutine == null)
+            _gameLoopCoroutine = StartCoroutine(TickRate());
+        else
+            StopAndRemoveCoroutine();
+            //StopAndRemoveCoroutine(ref _gameLoopCoroutine);
     }
 
     private IEnumerator TickRate()
@@ -142,22 +157,27 @@ public class GameLoop : MonoBehaviour
         {
             var res = _client.StartGame(new ClearMessage());
 
-            
-
-            TextureRefresh(TextureGeneration.GetTextureDataGreen(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, _checkLandSpaceOrientation));
+            TextureRefresh(TextureGeneration.GetTextureDataGreenParallelFor(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
         }
         catch (System.Exception ex)
         {
-            Logger.Text = "Exception GameLoop::StartGame: " + ex.Message;
+            Logger.Text = "Exception GameLoop::TickRate:Message " + ex.Message;
+            Logger.Text = "Exception GameLoop::TickRate:Source " + ex.Source;
+            Logger.Text = "Exception GameLoop::TickRate:StackTrace " + ex.StackTrace;
+            Logger.Text = "Exception GameLoop::TickRate:HelpLink " + ex.HelpLink;
+            Logger.Text = "StartDeviceOrientationSimple " + StartDeviceOrientationSimple.ToString();
+            Logger.Text = "GetDeviceOrientationSimple " + GetDeviceOrientationSimple.ToString();
+            Logger.Text = "CurrentDeviceOrientationSimple " + CurrentDeviceOrientationSimple.ToString();
             Logger.SetActive(true);
-            StopAndRemoveCoroutine(_gameLoopCoroutine);
+            StopAndRemoveCoroutine();
+            //StopAndRemoveCoroutine(ref _gameLoopCoroutine);
             yield break;
         }
 
         _gameLoopCoroutine = StartCoroutine(TickRate());
     }
 
-    private void StopAndRemoveCoroutine(Coroutine coroutine)
+    private void StopAndRemoveCoroutine(ref Coroutine coroutine)
     {
         if (coroutine != null)
         {
@@ -166,11 +186,62 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private bool _checkLandSpaceOrientation
+    private void StopAndRemoveCoroutine()
     {
-        //get => !(Input.deviceOrientation == DeviceOrientation.LandscapeLeft || Input.deviceOrientation == DeviceOrientation.LandscapeRight);
-        get => true;
+        if (_gameLoopCoroutine != null)
+        {
+            StopCoroutine(_gameLoopCoroutine);
+            _gameLoopCoroutine = null;
+        }
     }
+
+    public bool IsWasRotationDevice
+    {
+        get => StartDeviceOrientationSimple == GetDeviceOrientationSimple;
+    }
+    public DeviceOrientationSimple GetDeviceOrientationSimple
+    {
+        get
+        {
+            if (Input.deviceOrientation == DeviceOrientation.LandscapeRight || Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
+                return CurrentDeviceOrientationSimple = DeviceOrientationSimple.Landscape;
+            else if (Input.deviceOrientation == DeviceOrientation.Portrait || Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown)
+                return CurrentDeviceOrientationSimple = DeviceOrientationSimple.Portrait;
+            else
+                return CurrentDeviceOrientationSimple;
+        }
+    }
+
+    private DeviceOrientationSimple _currentDeviceOrientationSimple = DeviceOrientationSimple.Portrait;
+    public DeviceOrientationSimple CurrentDeviceOrientationSimple
+    {
+        get => _currentDeviceOrientationSimple;
+        set
+        {
+            if (_currentDeviceOrientationSimple == value) return;
+
+            _currentDeviceOrientationSimple = value;
+        }
+    }
+
+    private DeviceOrientationSimple _startDeviceOrientationSimple;
+    public DeviceOrientationSimple StartDeviceOrientationSimple
+    {
+        get => _startDeviceOrientationSimple;
+        set
+        {
+            if (_startDeviceOrientationSimple == value) return;
+
+            _startDeviceOrientationSimple = value;
+        }
+    }
+
+    public enum DeviceOrientationSimple
+    {
+        Portrait,
+        Landscape
+    }
+
 
     private void TextureRefresh(byte[] data)
     {
