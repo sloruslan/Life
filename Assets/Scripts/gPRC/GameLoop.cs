@@ -121,7 +121,7 @@ public class GameLoop : MonoBehaviour
             Logger.Text = "GameLoop::StartGame: _client.SettingApplication completed";
 
 
-            TextureRefresh(TextureGeneration.GetTextureDataGreenParallelFor(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
+            TextureRefresh(TextureGeneration.GetTextureDataGreenParallel(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
         }
         catch (System.Exception ex)
         {
@@ -157,7 +157,7 @@ public class GameLoop : MonoBehaviour
         {
             var res = _client.StartGame(new ClearMessage());
 
-            TextureRefresh(TextureGeneration.GetTextureDataGreenParallelFor(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
+            TextureRefresh(TextureGeneration.GetTextureDataGreenParallel(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
         }
         catch (System.Exception ex)
         {
