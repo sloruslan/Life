@@ -43,12 +43,13 @@
             int dstWidth = srcWidth * pixelPerCell * pixelFormat;
             int dstHeight = srcHeight * pixelPerCell;
             byte[] dstData = new byte[dstWidth * dstHeight];
-            int[] dstPtr = new int[pixelPerCell];
+            
 
-            Parallel.For(0, srcHeight, srcY =>
+            Parallel.For(0, srcHeight, (srcY, state) =>
             {
                 Parallel.For(0, srcWidth, srcX =>
                 {
+                    int[] dstPtr = new int[pixelPerCell];
                     for (int indexPtr = 0; indexPtr < pixelPerCell; indexPtr++)
                     {
                         dstPtr[indexPtr] = srcY * pixelPerCell * dstWidth + indexPtr * dstWidth + srcX * pixelPerCell * pixelFormat;
