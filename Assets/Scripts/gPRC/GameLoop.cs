@@ -92,6 +92,15 @@ public class GameLoop : MonoBehaviour
         _gameRender = GetComponent<GameRender>();
         _gameRender.Init(this);
 
+
+        Logger.Text = $"TimeOfTick: {TimeOfTick}";
+        Logger.Text = $"PixelsPerCell: { PixelsPerCell}";
+        Logger.Text = $"CellsPerHorizontal: {CellsPerHorizontal}";
+        Logger.Text = $"CellsPerVertical: {CellsPerVertical}";
+        Logger.Text = $"PixelsPerHorizontal: {PixelsPerHorizontal}";
+        Logger.Text = $"PixelsPerVercital: {PixelsPerVercital}";
+
+
         Logger.Text = "=========================>>";
         Logger.Text = "GameLoop::Init is completed";
 
@@ -109,7 +118,14 @@ public class GameLoop : MonoBehaviour
             if (_channel == null || _client == null)
             {   //http://46.72.251.132:7355
                 //_channel = Channel.ForAddress("http://46.72.251.132:7355");
-                _channel = new Channel("46.72.251.132:7355", ChannelCredentials.Insecure);
+
+                var options = new List<ChannelOption>()
+                {
+                    new ChannelOption(ChannelOptions.MaxReceiveMessageLength, 8192 * 8192),
+                    new ChannelOption(ChannelOptions.MaxSendMessageLength, 8192 * 8192)
+                };
+
+                _channel = new Channel("46.72.251.132:7355", ChannelCredentials.Insecure, options);
                 Logger.Text = "GameLoop::StartGame: _channel created";
                 _client = new GameService.GameServiceClient(_channel);
                 Logger.Text = "GameLoop::StartGame: _client created";
