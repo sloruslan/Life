@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Life.Server.Core.Contracts.Managers
 {
-    public interface IGameLoop<T> : IFirstGeneration<T>, INextGeneration<T>, INeighboursCount<T> where T : ICellState, new()
+    public interface IGameLoop<T> : IFirstGeneration<T>, INextGeneration<T> where T : ICellState, new()
     {
     }
 }

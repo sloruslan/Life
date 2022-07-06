@@ -2,7 +2,92 @@
 {
     public class TextureGeneration
     {
-        public static unsafe byte[] GetTextureData(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        public static unsafe byte[] GetTextureDataGreenParallel(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        {
+            int dstWidth = srcWidth * pixelPerCell * pixelFormat;
+            int dstHeight = srcHeight * pixelPerCell;
+            byte[] dstData = new byte[dstWidth * dstHeight];
+
+
+            Parallel.For(0, srcHeight, (srcY, state) =>
+            {
+                Parallel.For(0, srcWidth, srcX =>
+                {
+                    int[] dstPtr = new int[pixelPerCell];
+                    for (int indexPtr = 0; indexPtr < pixelPerCell; indexPtr++)
+                    {
+                        dstPtr[indexPtr] = srcY * pixelPerCell * dstWidth + indexPtr * dstWidth + srcX * pixelPerCell * pixelFormat;
+                    }
+
+                    for (int indexPixelX = 0; indexPixelX < pixelPerCell; indexPixelX++)
+                    {
+                        for (int indexPixelY = 0; indexPixelY < pixelPerCell; indexPixelY++)
+                        {
+                            dstData[dstPtr[indexPixelX] + indexPixelY * pixelFormat + 1] = (byte)(srcData[srcY * srcWidth + srcX] * 255);
+                        }
+                    }
+                });
+            });
+
+            return dstData;
+        }
+
+        public static unsafe byte[] GetTextureDataParallel(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        {
+            int dstWidth = srcWidth * pixelPerCell * pixelFormat;
+            int dstHeight = srcHeight * pixelPerCell;
+            byte[] dstData = new byte[dstWidth * dstHeight];
+            
+
+
+            Parallel.For(0, srcHeight, (srcY, state) =>
+            {
+                Parallel.For(0, srcWidth, srcX =>
+                {
+                    int[] dstPtr = new int[pixelPerCell];
+                    for (int indexPtr = 0; indexPtr < pixelPerCell; indexPtr++)
+                    {
+                        dstPtr[indexPtr] = srcY * pixelPerCell * dstWidth + indexPtr * dstWidth + srcX * pixelPerCell * pixelFormat;
+                    }
+
+                    for (int indexPixelX = 0; indexPixelX < pixelPerCell; indexPixelX++)
+                    {
+                        for (int indexPixelY = 0; indexPixelY < pixelPerCell; indexPixelY++)
+                        {
+                            fixed( byte* ptr = &dstData[dstPtr[indexPixelX] + indexPixelY * pixelFormat])
+                            {
+                                *(int*)ptr = srcData[srcY * srcWidth + srcX] << 15;
+                            }
+                        }
+                    }
+                });
+            });
+
+            return dstData;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private static unsafe byte[] GetTextureData(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
         {
             int dstWidth = srcWidth * pixelPerCell * pixelFormat;
             int dstHeight = srcHeight * pixelPerCell;
@@ -38,37 +123,9 @@
         }
 
 
-        public static unsafe byte[] GetTextureDataGreenParallel(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
-        {
-            int dstWidth = srcWidth * pixelPerCell * pixelFormat;
-            int dstHeight = srcHeight * pixelPerCell;
-            byte[] dstData = new byte[dstWidth * dstHeight];
-            
+        
 
-            Parallel.For(0, srcHeight, (srcY, state) =>
-            {
-                Parallel.For(0, srcWidth, srcX =>
-                {
-                    int[] dstPtr = new int[pixelPerCell];
-                    for (int indexPtr = 0; indexPtr < pixelPerCell; indexPtr++)
-                    {
-                        dstPtr[indexPtr] = srcY * pixelPerCell * dstWidth + indexPtr * dstWidth + srcX * pixelPerCell * pixelFormat;
-                    }
-
-                    for (int indexPixelX = 0; indexPixelX < pixelPerCell; indexPixelX++)
-                    {
-                        for (int indexPixelY = 0; indexPixelY < pixelPerCell; indexPixelY++)
-                        {
-                            dstData[dstPtr[indexPixelX] + indexPixelY * pixelFormat + 1] = (byte)(srcData[srcY * srcWidth + srcX] * 255);
-                        }
-                    }
-                });
-            });
-
-            return dstData;
-        }
-
-        public static unsafe byte[] GetTextureDataGreenParallelFor(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        private static unsafe byte[] GetTextureDataGreenFor(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
         {
             int dstWidth = srcWidth * pixelPerCell * pixelFormat;
             int dstHeight = srcHeight * pixelPerCell;
@@ -98,7 +155,36 @@
         }
 
 
-        public static unsafe byte[] GetTextureDataGreen(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        private static unsafe byte[] GetTextureDataGreenParallelFor(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        {
+            int dstWidth = srcWidth * pixelPerCell * pixelFormat;
+            int dstHeight = srcHeight * pixelPerCell;
+            byte[] dstData = new byte[dstWidth * dstHeight];
+            int[] dstPtr = new int[pixelPerCell];
+
+            for (int srcY = 0; srcY < srcHeight; srcY++)
+            {
+                for (int srcX = 0; srcX < srcWidth; srcX++)
+                {
+                    for (int indexPtr = 0; indexPtr < pixelPerCell; indexPtr++)
+                    {
+                        dstPtr[indexPtr] = srcY * pixelPerCell * dstWidth + indexPtr * dstWidth + srcX * pixelPerCell * pixelFormat;
+                    }
+
+                    for (int indexPixelX = 0; indexPixelX < pixelPerCell; indexPixelX++)
+                    {
+                        for (int indexPixelY = 0; indexPixelY < pixelPerCell; indexPixelY++)
+                        {
+                            dstData[dstPtr[indexPixelX] + indexPixelY * pixelFormat + 1] = (byte)(srcData[srcY * srcWidth + srcX] * 255);
+                        }
+                    }
+                }
+            }
+
+            return dstData;
+        }
+
+        private static unsafe byte[] GetTextureDataGreen(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
         {
             int dstWidth = srcWidth * pixelPerCell * pixelFormat;
             int dstHeight = srcHeight * pixelPerCell;
@@ -129,7 +215,7 @@
         }
 
 
-        public static unsafe byte[] GetTextureDataGreen(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat, bool isLandspace = true)
+        private static unsafe byte[] GetTextureDataGreen(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat, bool isLandspace = true)
         {
             if (!isLandspace)
             {
