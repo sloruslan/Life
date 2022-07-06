@@ -137,7 +137,7 @@ public class GameLoop : MonoBehaviour
             Logger.Text = "GameLoop::StartGame: _client.SettingApplication completed";
 
 
-            TextureRefresh(TextureGeneration.GetTextureDataGreenParallel(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
+            TextureRefresh(res.Array);
         }
         catch (System.Exception ex)
         {
@@ -173,7 +173,7 @@ public class GameLoop : MonoBehaviour
         {
             var res = _client.StartGame(new ClearMessage());
 
-            TextureRefresh(TextureGeneration.GetTextureDataGreenParallel(res.Array.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3));
+            TextureRefresh(res.Array);
         }
         catch (System.Exception ex)
         {
@@ -258,9 +258,19 @@ public class GameLoop : MonoBehaviour
         Landscape
     }
 
-
-    private void TextureRefresh(byte[] data)
+    private void TextureRefresh(Google.Protobuf.ByteString srcData)
     {
-        _gameRender.SetTextureColorStreamApply(data);
+        var pixelsData = TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3);
+
+        _gameRender.SetTextureColorStreamApply(pixelsData);
     }
+
+    /*
+    private void TextureRefresh(byte[] srcData)
+    {
+        var pixelsData = TextureGeneration.GetTextureDataGreenParallel(srcData, CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3);
+
+        _gameRender.SetTextureColorStreamApply(pixelsData);
+    }
+    */
 }
