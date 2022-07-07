@@ -1,17 +1,18 @@
 ﻿using Life.Server.Core.Contracts.Domain;
-using Life.Server.Core.Contracts.Managers;
+using Life.Server.Core.Contracts.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Life.Server.Infrastructure.Managers
+namespace Life.Server.Infrastructure.Services
 {
-    
+
     public class GameLoopOptimize<T> : GameLoopBase<T>, IGameLoop<T> where T : ICellState, new()
     {
-        public static T[,] StartGeneration(int perHorizontal, int perVertical, int density)
+        
+        public T[,] StartGeneration(int perHorizontal, int perVertical, int density)
         {
             Random random = new Random();
             T[,] cells = new T[perHorizontal, perVertical];
@@ -27,7 +28,7 @@ namespace Life.Server.Infrastructure.Managers
             return cells;
         }
 
-        public static T[,] NextGeneration(T[,] current)
+        public T[,] NextGeneration(T[,] current)
         {
             var perHorizontal = current.GetLength(0);
             var perVertical = current.GetLength(1);
@@ -64,7 +65,7 @@ namespace Life.Server.Infrastructure.Managers
             return newField;
         }
 
-        private static void RecalcNewField(int x, int y, T[,] inputCells, T[,] newField, int countSosedi)
+        private void RecalcNewField(int x, int y, T[,] inputCells, T[,] newField, int countSosedi)
         {
             if ((countSosedi == 3) || (inputCells[x, y].State != 0 && countSosedi == 2))
                 newField[x, y].State = 1;
@@ -73,8 +74,8 @@ namespace Life.Server.Infrastructure.Managers
         }
 
         // for interface
-        public static int NeighboursCount(T[,] cells, int x, int y, int perHorizontal, int perVertical) { return 0; }
-        public static int NeighboursCount(T[,] cells, int x, int y)
+        public int NeighboursCount(T[,] cells, int x, int y, int perHorizontal, int perVertical) { return 0; }
+        public int NeighboursCount(T[,] cells, int x, int y)
         {
             var x100 = x - 1;
             var x010 = x;
@@ -90,7 +91,7 @@ namespace Life.Server.Infrastructure.Managers
 
 
 
-        private static int NeighboursCount(int index, T[,] inputCells, ESide side, int perHorizontal, int perVertical)
+        private int NeighboursCount(int index, T[,] inputCells, ESide side, int perHorizontal, int perVertical)
         {
             var res = 0;
 
@@ -126,7 +127,7 @@ namespace Life.Server.Infrastructure.Managers
             return res;
         }
 
-        private static int NeighboursCount(T[,] inputCells, ESide side, int perHorizontal, int perVertical)
+        private int NeighboursCount(T[,] inputCells, ESide side, int perHorizontal, int perVertical)
         {
             int res = 0;
 

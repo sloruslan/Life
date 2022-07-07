@@ -1,11 +1,11 @@
-﻿using Life.Server.Core.Contracts.Managers;
-using Life.Server.Core.Contracts.Domain;
+﻿using Life.Server.Core.Contracts.Domain;
+using Life.Server.Core.Contracts.Services;
 
-namespace Life.Server.Infrastructure.Managers
+namespace Life.Server.Infrastructure.Services
 {
     public class GameLoopSimple<T> : GameLoopBase<T>, IGameLoop<T> where T : ICellState, new()
     {
-        public static T[,] StartGeneration(int perHorizontal, int perVertical, int density)
+        public T[,] StartGeneration(int perHorizontal, int perVertical, int density)
         {
             T[,] res = new T[perHorizontal, perVertical];
 
@@ -21,7 +21,7 @@ namespace Life.Server.Infrastructure.Managers
             return res;
         }
 
-        public static T[,] NextGeneration(T[,] current)
+        public T[,] NextGeneration(T[,] current)
         {
             var perHorizontal = current.GetLength(0);
             var perVertical = current.GetLength(1);
@@ -58,7 +58,7 @@ namespace Life.Server.Infrastructure.Managers
             return newFiled;
         }
 
-        public static int NeighboursCount(T[,] cells, int x, int y, int cols, int rows)
+        public int NeighboursCount(T[,] cells, int x, int y, int cols, int rows)
         {
             var res = 0;
             for (int i = -1; i < 2; i++)

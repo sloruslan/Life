@@ -1,7 +1,7 @@
 using Google.Protobuf;
 using Grpc.Core;
+using Life.Server.Core.Contracts.Services;
 using Life.Server.Core.Domain;
-using Life.Server.Infrastructure.Managers;
 using Life.Shared.Domain.Protos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -16,9 +16,11 @@ namespace Life.Server.Infrastructure.Controllers
     public class GameController : GameService.GameServiceBase
     {
         private readonly ILogger<GameController> _logger;
-        public GameController(ILogger<GameController> logger)
+        private IGameLoop<CellOptimize> _gameLoop;
+        public GameController(ILogger<GameController> logger, IGameLoop<CellOptimize> gameLoop)
         {
             _logger = logger;
+            _gameLoop = gameLoop;
         }
         //http://localhost:5231;https://localhost:7232;
         public override async Task<SettingsResponse> SettingApplication(Settings request, ServerCallContext context)
@@ -29,16 +31,16 @@ namespace Life.Server.Infrastructure.Controllers
 
             await Task.Run(() =>
             {
-                if (!GameLoop.Cells.ContainsKey(context.Peer))
+                if (!_gameLoop.Cells.ContainsKey(context.Peer))
                 {
-                    GameLoop.Cells.Add(context.Peer, GameLoop.StartGeneration(request.Horizontal, request.Vertical, request.Density));
+                    _gameLoop.Cells.Add(context.Peer, _gameLoop.StartGeneration(request.Horizontal, request.Vertical, request.Density));
                 }
                 else
                 {
-                    GameLoop.Cells[context.Peer] = GameLoop.StartGeneration(request.Horizontal, request.Vertical, request.Density);
+                    _gameLoop.Cells[context.Peer] = _gameLoop.StartGeneration(request.Horizontal, request.Vertical, request.Density);
                 }
 
-                res.Array = ByteString.CopyFrom(GameLoop.GetByteArray(GameLoop.Cells[context.Peer]));
+                res.Array = ByteString.CopyFrom(_gameLoop.GetByteArray(_gameLoop.Cells[context.Peer]));
             });
                 
             return res;
@@ -50,9 +52,9 @@ namespace Life.Server.Infrastructure.Controllers
 
             await Task.Run(() =>
             {
-                GameLoop.Cells[context.Peer] = GameLoop.NextGeneration(GameLoop.Cells[context.Peer]);
+                _gameLoop.Cells[context.Peer] = _gameLoop.NextGeneration(_gameLoop.Cells[context.Peer]);
 
-                res.Array = ByteString.CopyFrom(GameLoop.GetByteArray(GameLoop.Cells[context.Peer]));
+                res.Array = ByteString.CopyFrom(_gameLoop.GetByteArray(_gameLoop.Cells[context.Peer]));
             });
 
             return res;

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Life.Server.Core.Contracts.Managers
+namespace Life.Server.Core.Contracts.Services
 {
     public interface IContvertToByteArray<T> where T : ICellState, new()
     {
-        public static abstract Dictionary<string, T[,]> Cells { get; set; }
-        public static abstract byte[] GetByteArray(T[,] cells);
+        public Dictionary<string, T[,]> Cells { get; set; }
+        public byte[] GetByteArray(T[,] cells);
     }
 }
