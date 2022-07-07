@@ -11,7 +11,6 @@ namespace Life.Server.Infrastructure.Services
 
     public class GameLoopOptimize<T> : GameLoopBase<T>, IGameLoop<T> where T : ICellState, new()
     {
-        
         public T[,] StartGeneration(int perHorizontal, int perVertical, int density)
         {
             Random random = new Random();

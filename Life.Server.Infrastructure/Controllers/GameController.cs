@@ -22,12 +22,11 @@ namespace Life.Server.Infrastructure.Controllers
             _logger = logger;
             _gameLoop = gameLoop;
         }
-        //http://localhost:5231;https://localhost:7232;
+
+
         public override async Task<SettingsResponse> SettingApplication(Settings request, ServerCallContext context)
         {
             var res = new SettingsResponse() { Message = "Поле создано" };
-
-            //GameLoop<Cell>.Cells = new Cell[request.Cols, request.Rows];
 
             await Task.Run(() =>
             {
