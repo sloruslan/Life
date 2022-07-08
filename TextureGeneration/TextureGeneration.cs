@@ -32,7 +32,7 @@
             return dstData;
         }
 
-        public static unsafe byte[] GetTextureDataParallel(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat)
+        public static unsafe byte[] GetTextureDataParallel(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat, int offset)
         {
             int dstWidth = srcWidth * pixelPerCell * pixelFormat;
             int dstHeight = srcHeight * pixelPerCell;
@@ -56,7 +56,7 @@
                         {
                             fixed( byte* ptr = &dstData[dstPtr[indexPixelX] + indexPixelY * pixelFormat])
                             {
-                                *(int*)ptr = srcData[srcY * srcWidth + srcX] << 15;
+                                *(int*)ptr = srcData[srcY * srcWidth + srcX] << offset;
                             }
                         }
                     }
