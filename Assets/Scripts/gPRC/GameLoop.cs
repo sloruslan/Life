@@ -8,6 +8,10 @@ using TextureGenerationMethods;
 
 public class GameLoop : MonoBehaviour
 {
+
+    [Range(0, 32)]
+    public int OffsetColor = 15;
+
     [Range(0f, 2f)]
     public float TimeOfTick = 0.1f;
     public int PixelsPerCell = 8;
@@ -260,7 +264,7 @@ public class GameLoop : MonoBehaviour
 
     private void TextureRefresh(Google.Protobuf.ByteString srcData)
     {
-        var pixelsData = TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3);
+        var pixelsData = TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor);
 
         _gameRender.SetTextureColorStreamApply(pixelsData);
     }
