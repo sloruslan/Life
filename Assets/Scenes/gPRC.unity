@@ -591,7 +591,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.25
+  m_fontSize: 41.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -952,7 +952,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 53.15
+  m_fontSize: 39.85
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1107,7 +1107,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.25
+  m_fontSize: 41.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1662,7 +1662,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 25
   field of view: 60
   orthographic: 1
   orthographic size: 23
@@ -2340,7 +2340,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 53.15
+  m_fontSize: 39.85
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2629,7 +2629,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.25
+  m_fontSize: 41.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3210,7 +3210,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.25
+  m_fontSize: 41.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3344,7 +3344,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70.85
+  m_fontSize: 53.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3687,7 +3687,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.25
+  m_fontSize: 41.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3749,6 +3749,7 @@ GameObject:
   - component: {fileID: 1391383656}
   - component: {fileID: 1391383655}
   - component: {fileID: 1391383654}
+  - component: {fileID: 1391383658}
   m_Layer: 0
   m_Name: GameField
   m_TagString: Untagged
@@ -3768,13 +3769,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9728e547e691e4d84979212aad0cde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TimeOfTick: 0.1
+  OffsetColor: 15
+  TimeOfTick: 2
   PixelsPerCell: 8
   CellsPerHorizontal: 0
   CellsPerVertical: 0
   PixelsPerHorizontal: 0
   PixelsPerVercital: 0
   StartChanceOfLifeForCell: 2
+  TypeOfTextureGeneration: 1
 --- !u!114 &1391383655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3852,6 +3855,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1391383658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391383653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15f32f7ea88ef2340b80cf1e4cea1b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isExist: 0
+  InnerLoop: 1
 --- !u!1 &1393366562
 GameObject:
   m_ObjectHideFlags: 0
@@ -4275,7 +4292,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.25
+  m_fontSize: 41.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5064,7 +5081,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1514454408}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.036
+  m_Size: 0.027
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5361,7 +5378,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70.85
+  m_fontSize: 53.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5440,6 +5457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9728e547e691e4d84979212aad0cde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OffsetColor: 15
   TimeOfTick: 0.1
   PixelsPerCell: 8
   CellsPerHorizontal: 0
@@ -5447,6 +5465,7 @@ MonoBehaviour:
   PixelsPerHorizontal: 0
   PixelsPerVercital: 0
   StartChanceOfLifeForCell: 2
+  TypeOfTextureGeneration: 0
 --- !u!1001 &8238730827036137215
 PrefabInstance:
   m_ObjectHideFlags: 0

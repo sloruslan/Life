@@ -64,11 +64,17 @@ public class GameLoop : MonoBehaviour
             PixelsPerVercital = PixelsPerVercital > 0 && PixelsPerVercital >= CellsPerVertical * PixelsPerCell ? PixelsPerVercital : CellsPerVertical * PixelsPerCell;
         }
 
+        if (_gameRender == null)
+        {
+            _gameRender = GetComponent<GameRender>();
+            _gameRender.Init(this);
+        }
 
-        _gameRender = GetComponent<GameRender>();
-        _gameRender.Init(this);
-        _textureGenerationJob = GetComponent<TextureGenerationJob>();
-        _textureGenerationJob.WaitTextureGenerationJobCompletedEvent += OnWaitTextureGenerationJobCompleted;
+        if (_textureGenerationJob == null || _textureGenerationJob._isExist)
+        {
+            _textureGenerationJob = GetComponent<TextureGenerationJob>();
+            _textureGenerationJob.WaitTextureGenerationJobCompletedEvent += OnWaitTextureGenerationJobCompleted;
+        }
 
         Logger.Text = $"TimeOfTick: {TimeOfTick}";
         Logger.Text = $"PixelsPerCell: {PixelsPerCell}";
@@ -143,16 +149,39 @@ public class GameLoop : MonoBehaviour
             StopAndRemoveCoroutine();
     }
 
+    public bool showTickRateTime;
+    public bool showServerRequestTime;
+    public bool showTextureGenTime;
+
+    private System.Diagnostics.Stopwatch tickRateTime = new System.Diagnostics.Stopwatch();
+    private System.Diagnostics.Stopwatch serverRequestTime = new System.Diagnostics.Stopwatch();
+    private System.Diagnostics.Stopwatch textureGenTime = new System.Diagnostics.Stopwatch();
+
     private IEnumerator TickRate()
     {
+        if (tickRateTime.IsRunning)
+        {
+            tickRateTime.Stop();
+            if (showTickRateTime)
+                Debug.Log($"tickRateTime: {tickRateTime.ElapsedMilliseconds}");
+        }
+
+
         if (TimeOfTick == 0f)
             yield return null;
         else
             yield return new WaitForSeconds(TimeOfTick);
 
+        tickRateTime.Restart();
+
         try
         {
+            serverRequestTime.Restart();
             var res = _client.StartGame(new ClearMessage());
+
+            serverRequestTime.Stop();
+            if (showServerRequestTime)
+                Debug.Log($"serverRequestTime: {serverRequestTime.ElapsedMilliseconds}");
 
             TextureRefresh(res.Array);
 
@@ -179,6 +208,7 @@ public class GameLoop : MonoBehaviour
         {
             StopCoroutine(_gameLoopCoroutine);
             _gameLoopCoroutine = null;
+            _textureGenerationJob.Dispose();
         }
     }
 
@@ -186,10 +216,15 @@ public class GameLoop : MonoBehaviour
     {
         if (TypeOfTextureGeneration == ETypeOfTextureGeneration.Mono)
         {
-            _gameRender.SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor));
+            textureGenTime.Restart();
+            SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor));
+            textureGenTime.Stop();
+            if (showTextureGenTime)
+                Debug.Log($"textureGenTime Mono: {textureGenTime.ElapsedMilliseconds}");
         }
         else
         {
+            textureGenTime.Restart();
             _textureGenerationJob.RunTextureGenerationJob(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor);
         }
     }
@@ -207,8 +242,14 @@ public class GameLoop : MonoBehaviour
 
     private void OnWaitTextureGenerationJobCompleted(NativeArray<byte> textureData)
     {
+        textureGenTime.Stop();
+        if (showTextureGenTime)
+            Debug.Log($"textureGenTime Job: {textureGenTime.ElapsedMilliseconds}");
+
         SetTextureColorStreamApply(textureData);
-        StartCoroutine(TickRate());
+
+        if (_gameLoopCoroutine != null)
+            StartCoroutine(TickRate());
     }
 
     private void ExeptionLog(System.Exception ex)
