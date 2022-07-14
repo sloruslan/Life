@@ -14,7 +14,7 @@ public class TextureGenerationJob : MonoBehaviour
     public bool _isExist;
     private bool _isRun = false;
 
-    [Range(1, 50)]
+    [Range(1, 200)]
     public int InnerLoop = 50;
 
     public UnityAction<NativeArray<byte>> WaitTextureGenerationJobCompletedEvent { get; set; }
@@ -63,6 +63,7 @@ public class TextureGenerationJob : MonoBehaviour
     private struct TextureDataJob : IJobParallelFor
     {
         [ReadOnly]
+        [NoAlias]
         public NativeArray<byte> srcData;
 
         [ReadOnly]
@@ -77,6 +78,7 @@ public class TextureGenerationJob : MonoBehaviour
 
         [WriteOnly]
         [NativeDisableParallelForRestriction]
+        [NoAlias]
         public NativeArray<byte> dstData;
 
 
@@ -85,13 +87,6 @@ public class TextureGenerationJob : MonoBehaviour
         [ReadOnly]
         private int dstHeight;
 
-        [BurstCompile(
-            CompileSynchronously =false, Debug = false, 
-            DisableDirectCall = true, DisableSafetyChecks = true, 
-            FloatMode = FloatMode.Fast, 
-            FloatPrecision = FloatPrecision.Low, 
-            OptimizeFor = OptimizeFor.Performance
-            )]
         public void Execute(int index)
         {
             int srcY = index / srcWidth;
@@ -115,12 +110,14 @@ public class TextureGenerationJob : MonoBehaviour
             dstPtr.Dispose();
         }
 
+   
+
         public static TextureDataJob CreateTextureDataJob(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat, int offset)
         {
             TextureDataJob textureDataJob = new TextureDataJob();
 
             textureDataJob.srcData = new NativeArray<byte>(srcData, Allocator.Persistent);
-            
+
 
             textureDataJob.srcWidth = srcWidth;
             textureDataJob.srcHeight = srcHeight;

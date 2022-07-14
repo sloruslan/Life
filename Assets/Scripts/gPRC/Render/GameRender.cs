@@ -22,6 +22,7 @@ public class GameRender : MonoBehaviour
         _cellsPerHorizontal = gameLoop.CellsPerHorizontal;
 
         _texture2D = new Texture2D(_widthTexturePerPixels, _heightTexturePerPixels, TextureFormat.RGB24, false);
+        //_texture2D = new Texture2D(_widthTexturePerPixels, _heightTexturePerPixels, TextureFormat.ARGB32, false);
 
         _sprite = Sprite.Create(_texture2D, new Rect(0f, 0f, _widthTexturePerPixels, _heightTexturePerPixels), new Vector2(0.5f, 0.5f), 32);
         _sprite.name = "mySprite";
@@ -55,7 +56,35 @@ public class GameRender : MonoBehaviour
         }
     }
 
+    public void SetTextureColorStreamApply(int[] textureData)
+    {
+        try
+        {
+            _texture2D.SetPixelData(textureData, 0);
+            _texture2D.Apply();
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Text = "Exception GameRender::SetTextureColorStreamApply: " + ex.Message;
+            Logger.SetActive(true);
+        }
+    }
+
     public void SetTextureColorStreamApply(NativeArray<byte> textureData)
+    {
+        try
+        {
+            _texture2D.SetPixelData(textureData, 0);
+            _texture2D.Apply();
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Text = "Exception GameRender::SetTextureColorStreamApply: " + ex.Message;
+            Logger.SetActive(true);
+        }
+    }
+
+    public void SetTextureColorStreamApply(NativeArray<int> textureData)
     {
         try
         {

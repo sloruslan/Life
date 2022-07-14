@@ -218,6 +218,7 @@ public class GameLoop : MonoBehaviour
         {
             textureGenTime.Restart();
             SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor));
+            //SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallelIter(srcData.ToArray()));
             textureGenTime.Stop();
             if (showTextureGenTime)
                 Debug.Log($"textureGenTime Mono: {textureGenTime.ElapsedMilliseconds}");
@@ -235,12 +236,19 @@ public class GameLoop : MonoBehaviour
         _gameRender.SetTextureColorStreamApply(textureData);
     }
 
+    private void SetTextureColorStreamApply(int[] textureData)
+    {
+        _gameRender.SetTextureColorStreamApply(textureData);
+    }
+
     private void SetTextureColorStreamApply(NativeArray<byte> textureData)
+    //private void SetTextureColorStreamApply(NativeArray<int> textureData)
     {
         _gameRender.SetTextureColorStreamApply(textureData);
     }
 
     private void OnWaitTextureGenerationJobCompleted(NativeArray<byte> textureData)
+    //private void OnWaitTextureGenerationJobCompleted(NativeArray<int> textureData)
     {
         textureGenTime.Stop();
         if (showTextureGenTime)
