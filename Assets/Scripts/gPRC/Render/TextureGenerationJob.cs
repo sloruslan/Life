@@ -75,7 +75,6 @@ public class TextureGenerationJob : MonoBehaviour
         [ReadOnly]
         public int pixelFormat;
         public int offset;
-
         [WriteOnly]
         [NativeDisableParallelForRestriction]
         [NoAlias]
@@ -86,6 +85,7 @@ public class TextureGenerationJob : MonoBehaviour
         private int dstWidth;
         [ReadOnly]
         private int dstHeight;
+
 
         public void Execute(int index)
         {
@@ -109,8 +109,14 @@ public class TextureGenerationJob : MonoBehaviour
 
             dstPtr.Dispose();
         }
+        
 
-   
+       // public void Execute(int index)
+       // {
+       //     dstData[index * 3 + 1] = (byte)(srcData[index] * 255);
+       // }
+
+
 
         public static TextureDataJob CreateTextureDataJob(byte[] srcData, int srcWidth, int srcHeight, int pixelPerCell, int pixelFormat, int offset)
         {

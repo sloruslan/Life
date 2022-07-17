@@ -9,14 +9,4 @@ int4 _IntValues[2];
 void Test(uint i : SV_DispatchThreadID)
 {
 
-
-    //_IntBuffer[i] = _IntValues[i];
-    if (i == 0) _IntBuffer[i] = _IntValues[0].x;
-    else if (i == 1) _IntBuffer[i] = _IntValues[0].y;
-    else if (i == 2) _IntBuffer[i] = _IntValues[0].z;
-    else if (i == 3) _IntBuffer[i] = _IntValues[0].w;
-    else if (i == 4) _IntBuffer[i] = _IntValues[1].x;
-    else if (i == 5) _IntBuffer[i] = _IntValues[1].y;
-    else if (i == 6) _IntBuffer[i] = _IntValues[1].z;
-    else if (i == 7) _IntBuffer[i] = _IntValues[1].w;
 }
