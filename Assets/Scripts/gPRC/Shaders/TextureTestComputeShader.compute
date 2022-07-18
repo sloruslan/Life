@@ -2,7 +2,6 @@
 
 uint srcWidth;
 uint pixelPerCell;
-uint pixelFormat;
 uint dstWidth; 
 
 uint2 dstPtr;
@@ -19,19 +18,27 @@ void CreatePixels(int cell, int index)
     //for (uint indexPtr = 0; indexPtr < pixelPerCell; indexPtr++)
     //{
         //dstPtr[indexPtr] = srcY * pixelPerCell * dstWidth + indexPtr * dstWidth + srcX * pixelPerCell * pixelFormat;
-        dstPtr.x = srcY * pixelPerCell * dstWidth + srcX * pixelPerCell * pixelFormat;
-        dstPtr.y = srcY * pixelPerCell * dstWidth + dstWidth + srcX * pixelPerCell * pixelFormat;
+        dstPtr.x = srcY * pixelPerCell * dstWidth + srcX * pixelPerCell;
+        dstPtr.y = srcY * pixelPerCell * dstWidth + dstWidth + srcX * pixelPerCell;
     //}
 
     //for (uint indexPixelX = 0; indexPixelX < pixelPerCell; indexPixelX++)
    // {
+        /*
         for (uint indexPixelY = 0; indexPixelY < pixelPerCell; indexPixelY++)
         {
             //_OutBuffer[dstPtr[indexPixelX] + indexPixelY * pixelFormat] = cell * 255 << 15 | 0xFF;
-            _OutBuffer[dstPtr.x + indexPixelY * pixelFormat] = cell * 255 << 16 | 0xFF;
-            _OutBuffer[dstPtr.y + indexPixelY * pixelFormat] = cell * 255 << 16 | 0xFF;
-        }
+            _OutBuffer[dstPtr.x + indexPixelY] = (cell * 255) << 16 | 0xFF;
+            _OutBuffer[dstPtr.y + indexPixelY] = (cell * 255) << 16 | 0xFF;
+        }*/
    // }
+
+
+            _OutBuffer[dstPtr.x] = (cell * 255) << 16 | 0xFF;
+            _OutBuffer[dstPtr.y] = (cell * 255) << 16 | 0xFF;
+
+            _OutBuffer[dstPtr.x + 1] = (cell * 255) << 16 | 0xFF;
+            _OutBuffer[dstPtr.y + 1] = (cell * 255) << 16 | 0xFF;
 }
 
 void ExecuteCells(uint index)
