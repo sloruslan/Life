@@ -1,0 +1,41 @@
+#pragma kernel Test
+
+uint srcWidth;
+uint pixelPerCell;
+uint dstWidth; 
+
+uint2 dstPtr;
+
+RWStructuredBuffer<int> _InBuffer;
+RWStructuredBuffer<int> _OutBuffer;
+
+void CreatePixels(int cell, int index)
+{
+    uint srcY = index / srcWidth;
+    uint srcX = index - srcY * srcWidth;
+
+    dstPtr.x = srcY * pixelPerCell * dstWidth + srcX * pixelPerCell;
+    dstPtr.y = srcY * pixelPerCell * dstWidth + dstWidth + srcX * pixelPerCell;
+    
+    _OutBuffer[dstPtr.x] = (cell * 255) << 16 | 0xFF;
+    _OutBuffer[dstPtr.y] = (cell * 255) << 16 | 0xFF;
+    
+    _OutBuffer[dstPtr.x + 1] = (cell * 255) << 16 | 0xFF;
+    _OutBuffer[dstPtr.y + 1] = (cell * 255) << 16 | 0xFF;
+}
+
+void ExecuteCells(uint index)
+{
+    CreatePixels((_InBuffer[index] >> 0) & 0xFF, index * 4 + 0);
+    CreatePixels((_InBuffer[index] >> 8) & 0xFF, index * 4 + 1);
+    CreatePixels((_InBuffer[index] >> 16) & 0xFF, index * 4 + 2);
+    CreatePixels((_InBuffer[index] >> 24) & 0xFF, index * 4 + 3);
+}
+
+
+
+[numthreads(1024, 1, 1)]
+void Test(uint i : SV_DispatchThreadID)
+{
+    ExecuteCells(i); 
+}

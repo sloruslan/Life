@@ -19,6 +19,7 @@ public class GameLoop : MonoBehaviour
 
     private GameRender _gameRender;
     private TextureGenerationJob _textureGenerationJob;
+    private TextureDataUIntComputeShaderControl _shaderControl;
 
     public int CellsPerHorizontal = -1;
     public int CellsPerVertical = -1;
@@ -39,7 +40,8 @@ public class GameLoop : MonoBehaviour
     public enum ETypeOfTextureGeneration
     {
         Mono,
-        Job
+        Job,
+        Shader
     }
 
     public void Init()//Awake()
@@ -74,6 +76,11 @@ public class GameLoop : MonoBehaviour
         {
             _textureGenerationJob = GetComponent<TextureGenerationJob>();
             _textureGenerationJob.WaitTextureGenerationJobCompletedEvent += OnWaitTextureGenerationJobCompleted;
+        }
+
+        if (_shaderControl == null)
+        {
+            _shaderControl = GetComponent<TextureDataUIntComputeShaderControl>();
         }
 
         Logger.Text = $"TimeOfTick: {TimeOfTick}";
@@ -185,9 +192,17 @@ public class GameLoop : MonoBehaviour
 
             TextureRefresh(res.Array);
 
-            if (TypeOfTextureGeneration == ETypeOfTextureGeneration.Mono)
+            switch (TypeOfTextureGeneration)
             {
-                _gameLoopCoroutine = StartCoroutine(TickRate());
+                case ETypeOfTextureGeneration.Mono:
+                case ETypeOfTextureGeneration.Shader:
+                    {
+                        _gameLoopCoroutine = StartCoroutine(TickRate());
+                    }
+                    break;
+
+                default:
+                    break;
             }
         }
         catch (System.Exception ex)
@@ -214,19 +229,44 @@ public class GameLoop : MonoBehaviour
 
     private void TextureRefresh(Google.Protobuf.ByteString srcData)
     {
-        if (TypeOfTextureGeneration == ETypeOfTextureGeneration.Mono)
+        switch (TypeOfTextureGeneration)
         {
-            textureGenTime.Restart();
-            SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor));
-            //SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallelIter(srcData.ToArray()));
-            textureGenTime.Stop();
-            if (showTextureGenTime)
-                Debug.Log($"textureGenTime Mono: {textureGenTime.ElapsedMilliseconds}");
-        }
-        else
-        {
-            textureGenTime.Restart();
-            _textureGenerationJob.RunTextureGenerationJob(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor);
+
+            case ETypeOfTextureGeneration.Mono:
+                {
+                    textureGenTime.Restart();
+                    SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallel(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor));
+                    //SetTextureColorStreamApply(TextureGeneration.GetTextureDataParallelIter(srcData.ToArray()));
+                    textureGenTime.Stop();
+                    if (showTextureGenTime)
+                        Debug.Log($"textureGenTime Mono: {textureGenTime.ElapsedMilliseconds}");
+                }
+                break;
+
+            case ETypeOfTextureGeneration.Job:
+                {
+                    textureGenTime.Restart();
+                    _textureGenerationJob.RunTextureGenerationJob(srcData.ToArray(), CellsPerHorizontal, CellsPerVertical, PixelsPerCell, 3, OffsetColor);
+                }
+                break;
+
+            case ETypeOfTextureGeneration.Shader:
+                {
+                    textureGenTime.Restart();
+
+                    var dst = _shaderControl.TextureDataGeneration(srcData.ToArray(), CellsPerHorizontal, 2);
+                    if (showTextureGenTime)
+                        Debug.Log($"textureGenTime Shader TextureDataGeneration: {textureGenTime.ElapsedMilliseconds}");
+                    SetTextureColorStreamApply(dst);
+                    if (showTextureGenTime)
+                        Debug.Log($"textureGenTime Shader SetTextureColorStreamApply: {textureGenTime.ElapsedMilliseconds}");
+                    textureGenTime.Stop();
+                    
+                }
+                break;
+            default:
+                break;
+
         }
     }
 
@@ -237,6 +277,11 @@ public class GameLoop : MonoBehaviour
     }
 
     private void SetTextureColorStreamApply(int[] textureData)
+    {
+        _gameRender.SetTextureColorStreamApply(textureData);
+    }
+
+    private void SetTextureColorStreamApply(uint[] textureData)
     {
         _gameRender.SetTextureColorStreamApply(textureData);
     }

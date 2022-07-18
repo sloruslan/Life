@@ -69,7 +69,7 @@ public class ConvertBytesToIntsJobScript : MonoBehaviour
 
         src[0] = 1;
 
-        StartShader(src);
+        //StartShader(src);
     }
 
     private unsafe void StartShader(byte[] src)
