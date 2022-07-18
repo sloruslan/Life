@@ -36,7 +36,7 @@ void CreatePixels(int cell, int index)
 
 void ExecuteCells(uint index)
 {
-    CreatePixels(_InBuffer[index] & 0xFF, index * 4);
+    CreatePixels((_InBuffer[index] >> 0) & 0xFF, index * 4 + 0);
     CreatePixels((_InBuffer[index] >> 8) & 0xFF, index * 4 + 1);
     CreatePixels((_InBuffer[index] >> 16) & 0xFF, index * 4 + 2);
     CreatePixels((_InBuffer[index] >> 24) & 0xFF, index * 4 + 3);

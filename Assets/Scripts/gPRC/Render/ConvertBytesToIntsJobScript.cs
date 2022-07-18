@@ -20,11 +20,15 @@ public class ConvertBytesToIntsJobScript : MonoBehaviour
 
     public ComputeShader computeShader;
 
+    static int w = 32;
+    static int h = 32;
+
     private void Start()
     {
+        
         //byte[] src = new byte[16384 * 16384];
         //byte[] src = new byte[8192 * 8192];
-        byte[] src = new byte[3840 * 2160];
+        byte[] src = new byte[w * h];
 
         /*
         for (int i = 0; i < 1024; i++)
@@ -50,11 +54,13 @@ public class ConvertBytesToIntsJobScript : MonoBehaviour
         src[src.Length - 1] = 0;
 
         */
-        
-        for (int i = 0; i < 1024; i++)
-        {
-            src[i] = 1;// (byte)(i % 2 == 0 ? 1 : 0);
-        }
+
+        //..for (int i = 0; i < 1024; i++)
+        //{
+        //    src[i] = 1;// (byte)(i % 2 == 0 ? 1 : 0);
+        //}
+
+        src[0] = 1;
 
         StartShader(src);
     }
@@ -88,10 +94,10 @@ public class ConvertBytesToIntsJobScript : MonoBehaviour
         computeShader.SetBuffer(0, "_OutBuffer", outBuffer);
         DebugLog("_OutBuffer");
 
-        computeShader.SetInt("srcWidth", 3840);
+        computeShader.SetInt("srcWidth", w);
         computeShader.SetInt("pixelPerCell", 2);
         computeShader.SetInt("pixelFormat", 4);
-        computeShader.SetInt("dstWidth", 3840 * 2 * 4);
+        computeShader.SetInt("dstWidth", w * 2 * 4);
 
         
         int testKernel = computeShader.FindKernel("Test");
@@ -115,11 +121,11 @@ public class ConvertBytesToIntsJobScript : MonoBehaviour
         outBuffer.Dispose();
 
         UnityEngine.Debug.Log("0..16: ");
-        OutArray(dstOut, 1024, 16);
+        OutArray(dstOut, dstOut.Length, 16);
 
         UnityEngine.Debug.Log("index..last:");
 
-        OutArrayInvers(dstOut, 1024, 16);
+        OutArrayInvers(dstOut, dstOut.Length, 16);
 
         // dstInN.Dispose();
     }
