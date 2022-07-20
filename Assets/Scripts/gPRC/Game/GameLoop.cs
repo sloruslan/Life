@@ -10,6 +10,8 @@ using Unity.Collections;
 public class GameLoop : MonoBehaviour
 {
 
+    public bool IsRendererTexture;
+
     [Range(0, 32)]
     public int OffsetColor = 15;
 
@@ -19,7 +21,8 @@ public class GameLoop : MonoBehaviour
 
     private GameRender _gameRender;
     private TextureGenerationJob _textureGenerationJob;
-    private TextureDataUIntComputeShaderControl _shaderControl;
+    private TextureDataUIntComputeShaderControl _shaderSpriteControl;
+    private TextureDataTexture2DComputeShaderControl _shaderMaterialControl;
 
     public int CellsPerHorizontal = -1;
     public int CellsPerVertical = -1;
@@ -69,7 +72,7 @@ public class GameLoop : MonoBehaviour
         if (_gameRender == null)
         {
             _gameRender = GetComponent<GameRender>();
-            _gameRender.Init(this);
+            _gameRender.Init(this, IsRendererTexture);
         }
 
         if (_textureGenerationJob == null || _textureGenerationJob._isExist)
@@ -78,9 +81,14 @@ public class GameLoop : MonoBehaviour
             _textureGenerationJob.WaitTextureGenerationJobCompletedEvent += OnWaitTextureGenerationJobCompleted;
         }
 
-        if (_shaderControl == null)
+        if (!IsRendererTexture && _shaderSpriteControl == null)
         {
-            _shaderControl = GetComponent<TextureDataUIntComputeShaderControl>();
+            _shaderSpriteControl = GetComponent<TextureDataUIntComputeShaderControl>();
+        }
+
+        if (IsRendererTexture && _shaderMaterialControl == null)
+        {
+            _shaderMaterialControl = GetComponent<TextureDataTexture2DComputeShaderControl>();
         }
 
         Logger.Text = $"TimeOfTick: {TimeOfTick}";
@@ -254,12 +262,21 @@ public class GameLoop : MonoBehaviour
                 {
                     textureGenTime.Restart();
 
-                    var dst = _shaderControl.TextureDataGeneration(srcData.ToArray(), CellsPerHorizontal, 2);
-                    if (showTextureGenTime)
-                        Debug.Log($"textureGenTime Shader TextureDataGeneration: {textureGenTime.ElapsedMilliseconds}");
-                    SetTextureColorStreamApply(dst);
-                    if (showTextureGenTime)
-                        Debug.Log($"textureGenTime Shader SetTextureColorStreamApply: {textureGenTime.ElapsedMilliseconds}");
+                    if (IsRendererTexture)
+                    {
+                        _shaderMaterialControl.CreateShader(_gameRender.RenderTexture, srcData.ToArray(), CellsPerHorizontal, PixelsPerCell);
+                        if (showTextureGenTime)
+                            Debug.Log($"textureGenTime Shader CreateShader: {textureGenTime.ElapsedMilliseconds}");
+                    }
+                    else
+                    {
+                        var dst = _shaderSpriteControl.TextureDataGeneration(srcData.ToArray(), CellsPerHorizontal, PixelsPerCell);
+                        if (showTextureGenTime)
+                            Debug.Log($"textureGenTime Shader TextureDataGeneration: {textureGenTime.ElapsedMilliseconds}");
+                        SetTextureColorStreamApply(dst);
+                        if (showTextureGenTime)
+                            Debug.Log($"textureGenTime Shader SetTextureColorStreamApply: {textureGenTime.ElapsedMilliseconds}");
+                    }
                     textureGenTime.Stop();
                     
                 }

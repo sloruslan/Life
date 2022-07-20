@@ -8,13 +8,16 @@ using UnityEngine;
 public class TextureDataTexture2DComputeShaderControl : MonoBehaviour
 {
     public ComputeShader computeShader;
+    private RenderTexture _renderTexture;
+    private ComputeBuffer _inBuffer;
 
-    public unsafe uint[] TextureDataGeneration(Texture2D texture2D, byte[] srcData, int srcWidth, int pixelPerCell)
+    private bool _isInit = false;
+
+    public unsafe void CreateShader(RenderTexture renderTexture, byte[] srcData, int srcWidth, int pixelPerCell)
     {
+        _renderTexture = renderTexture;
         uint[] dstDataConvert = new uint[srcData.Length / 4];
         uint[] dstDataOut = new uint[srcData.Length * 4];
-
-       // RenderTexture renderTexture = new RenderTexture()
 
         fixed (void* srcPtr = &srcData[0])
         {
@@ -24,19 +27,23 @@ public class TextureDataTexture2DComputeShaderControl : MonoBehaviour
             gCHandle.Free();
         }
 
-        ComputeBuffer inBuffer = new ComputeBuffer(dstDataConvert.Length, 4, ComputeBufferType.Structured);
-        inBuffer.SetData(dstDataConvert);
-
-        ComputeBuffer outBuffer = new ComputeBuffer(dstDataOut.Length, 4, ComputeBufferType.Structured);
-        computeShader.SetBuffer(0, "_InBuffer", inBuffer);
-        computeShader.SetBuffer(0, "_OutBuffer", outBuffer);
-
-        computeShader.SetInt("srcWidth", srcWidth);
-        computeShader.SetInt("pixelPerCell", pixelPerCell);
-        computeShader.SetInt("dstWidth", srcWidth * pixelPerCell);
-
-
         int testKernel = computeShader.FindKernel("Test");
+
+        if (!_isInit)
+        {
+            _inBuffer = new ComputeBuffer(dstDataConvert.Length, 4, ComputeBufferType.Structured);
+            computeShader.SetTexture(testKernel, "_OutBuffer", renderTexture);
+
+            computeShader.SetInt("srcWidth", srcWidth);
+            computeShader.SetInt("pixelPerCell", pixelPerCell);
+            computeShader.SetInt("dstWidth", srcWidth * pixelPerCell);
+
+            _isInit = true;
+        }
+
+        _inBuffer.SetData(dstDataConvert);
+        computeShader.SetBuffer(0, "_InBuffer", _inBuffer);
+
         uint x, y, z;
         computeShader.GetKernelThreadGroupSizes(testKernel, out x, out y, out z);
 
@@ -44,14 +51,11 @@ public class TextureDataTexture2DComputeShaderControl : MonoBehaviour
         var bufferSize = groupCount * x;
 
         computeShader.Dispatch(testKernel, groupCount, 1, 1);
+    }
 
-        outBuffer.GetData(dstDataOut);
-
-        inBuffer.Release();
-        outBuffer.Release();
-        inBuffer.Dispose();
-        outBuffer.Dispose();
-
-        return dstDataOut;
+    private void OnDisable()
+    {
+        //inBuffer.Release();
+        //inBuffer.Dispose();
     }
 }

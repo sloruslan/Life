@@ -15,7 +15,7 @@ public class TextureDataUIntComputeShaderControl : MonoBehaviour
         sw0.Restart();
 
         uint[] dstDataConvert = new uint[srcData.Length / 4];
-        uint[] dstDataOut = new uint[srcData.Length * 4];
+        uint[] dstDataOut = new uint[srcData.Length * pixelPerCell * pixelPerCell];
 
         fixed (void* srcPtr = &srcData[0])
         {

@@ -5,23 +5,35 @@ uint pixelPerCell;
 uint dstWidth; 
 
 uint2 dstPtr;
+uint2 pixelCoord;
+uint2 offsetX;
+uint2 offsetY;
 
-RWStructuredBuffer<int> _InBuffer;
-Texture2D _OutBuffer;
+RWStructuredBuffer<uint> _InBuffer;
+RWTexture2D<uint> _OutBuffer;
 
 void CreatePixels(int cell, int index)
 {
     uint srcY = index / srcWidth;
     uint srcX = index - srcY * srcWidth;
 
-    dstPtr.x = srcY * pixelPerCell * dstWidth + srcX * pixelPerCell;
-    dstPtr.y = srcY * pixelPerCell * dstWidth + dstWidth + srcX * pixelPerCell;
+    //dstPtr.x = srcY * pixelPerCell * dstWidth + srcX * pixelPerCell;
+    //dstPtr.y = srcY * pixelPerCell * dstWidth + dstWidth + srcX * pixelPerCell;
+
+    pixelCoord.x = srcY * pixelPerCell;
+    pixelCoord.y = srcY * pixelPerCell + dstWidth;
+
+    //_OutBuffer[dstPtr.x] = (cell * 255) << 16 | 0xFF;
+    //_OutBuffer[dstPtr.y] = (cell * 255) << 16 | 0xFF;
     
-    _OutBuffer[dstPtr.x] = (cell * 255) << 16 | 0xFF;
-    _OutBuffer[dstPtr.y] = (cell * 255) << 16 | 0xFF;
-    
-    _OutBuffer[dstPtr.x + 1] = (cell * 255) << 16 | 0xFF;
-    _OutBuffer[dstPtr.y + 1] = (cell * 255) << 16 | 0xFF;
+    //_OutBuffer[dstPtr.x + 1] = (cell * 255) << 16 | 0xFF;
+    //_OutBuffer[dstPtr.y + 1] = (cell * 255) << 16 | 0xFF;
+
+    _OutBuffer[pixelCoord] = (cell * 255) << 16 | 0xFF;
+    //_OutBuffer[pixelCoord + offsetX] = (cell * 255) << 16 | 0xFF;
+
+    //_OutBuffer[pixelCoord + offsetY] = (cell * 255) << 16 | 0xFF;
+    //_OutBuffer[pixelCoord + offsetY + offsetX] = (cell * 255) << 16 | 0xFF;
 }
 
 void ExecuteCells(uint index)
@@ -37,5 +49,10 @@ void ExecuteCells(uint index)
 [numthreads(1024, 1, 1)]
 void Test(uint i : SV_DispatchThreadID)
 {
+    offsetX.x = 1;
+    offsetX.y = 0;
+    offsetY.x = 0;
+    offsetY.y = 1;
+
     ExecuteCells(i); 
 }

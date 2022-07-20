@@ -4,7 +4,7 @@ uint srcWidth;
 uint pixelPerCell;
 uint dstWidth; 
 
-uint2 dstPtr;
+uint4 dstPtr;
 
 RWStructuredBuffer<int> _InBuffer;
 RWStructuredBuffer<int> _OutBuffer;
@@ -16,12 +16,36 @@ void CreatePixels(int cell, int index)
 
     dstPtr.x = srcY * pixelPerCell * dstWidth + srcX * pixelPerCell;
     dstPtr.y = srcY * pixelPerCell * dstWidth + dstWidth + srcX * pixelPerCell;
-    
+    if (pixelPerCell == 4)
+    {
+        dstPtr.z = srcY * pixelPerCell * dstWidth + dstWidth * 2 + srcX * pixelPerCell;
+        dstPtr.w = srcY * pixelPerCell * dstWidth + dstWidth * 3 + srcX * pixelPerCell;
+    }
     _OutBuffer[dstPtr.x] = (cell * 255) << 16 | 0xFF;
     _OutBuffer[dstPtr.y] = (cell * 255) << 16 | 0xFF;
-    
+
     _OutBuffer[dstPtr.x + 1] = (cell * 255) << 16 | 0xFF;
     _OutBuffer[dstPtr.y + 1] = (cell * 255) << 16 | 0xFF;
+
+    if (pixelPerCell == 4)
+    {
+        _OutBuffer[dstPtr.z] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.w] = (cell * 255) << 16 | 0xFF;
+
+
+        _OutBuffer[dstPtr.z + 1] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.w + 1] = (cell * 255) << 16 | 0xFF;
+
+        _OutBuffer[dstPtr.x + 2] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.y + 2] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.z + 2] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.w + 2] = (cell * 255) << 16 | 0xFF;
+
+        _OutBuffer[dstPtr.x + 3] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.y + 3] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.z + 3] = (cell * 255) << 16 | 0xFF;
+        _OutBuffer[dstPtr.w + 3] = (cell * 255) << 16 | 0xFF;
+    }
 }
 
 void ExecuteCells(uint index)
